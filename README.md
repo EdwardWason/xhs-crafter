@@ -2,37 +2,28 @@
 
 将 Markdown 文章排版为 3:4 比例的精美图片卡片 + 压缩文字稿，用于微信公众号/小红书贴图发布。
 
+[![版本](https://img.shields.io/badge/version-7.0.1-blue)](https://github.com/EdwardWason/xhs-crafter)
+[![许可证](https://img.shields.io/badge/license-MIT--0-green)](LICENSE)
+[![ClawHub](https://img.shields.io/badge/ClawHub-xhs--crafter-orange)](https://clawhub.ai/EdwardWason/xhs-crafter)
+
 ## 功能
 
-- **MD → 精美图片卡片**：自动将 Markdown 文章拆分排版为多张 1080×1440 (3:4) HTML 页面，截图为 PNG
+- **MD → 图片卡片**：自动将 Markdown 文章拆分排版为多张 1080x1440 (3:4) HTML 页面，截图为 PNG
 - **双风格系统**：Editorial Magazine（杂志风，衬线+暖纸底）和 Swiss International（瑞士网格风，无衬线+白底）
 - **10 套主题色**：Ink Classic / Indigo Porcelain / Forest Ink / Kraft Paper / Dune / Midnight Ink / IKB Blue / Lemon Yellow / Lemon Green / Safety Orange
 - **28 种布局模板**：M01-M16（Editorial）+ S01-S12（Swiss）
 - **三层节奏系统**：明暗交替 + 氛围强弱 + 版式多样性
-- **密度铁律**：活跃构图 ≥78% 画布高度，确保信息密度
-- **文字压缩**：保留原话引言+场景描述，压缩至 ≤1000 字
-- **双通道交付**：本地文件夹 + 飞书云盘同步（手机端直接访问）
+- **密度铁律**：活跃构图 >= 78% 画布高度，确保信息密度
+- **文字压缩**：保留原话引言+场景描述，压缩至 <= 1000 字
+- **双通道交付**：本地文件夹 + 飞书云盘同步
 
-## 5 步全自动工作流
-
-```
-MD 文章输入
-  → Step 1: Intake（识别品类）
-  → Step 2: Content Plan（内容规划）
-  → Step 3: Compose（组装 HTML）
-  → Step 4: Validate（自检）
-  → Step 5: Screenshot & Deliver（截图交付）
-```
-
-用户只需提供 MD 文件，直接出文件夹，中间不停顿。
-
-## 安装
+## 快速开始
 
 ```bash
-npx skills install EdwardWason/xhs-crafter -g
+npx clawhub@latest install EdwardWason/xhs-crafter
 ```
 
-## 使用
+## 使用方法
 
 在 TRAE / Claude Code / OpenClaw 中，直接提供 MD 文件路径即可触发：
 
@@ -40,7 +31,15 @@ npx skills install EdwardWason/xhs-crafter -g
 请用 xhs-crafter 对这篇文章排版：/path/to/article.md
 ```
 
-## 项目结构
+5 步全自动工作流，用户只需给 MD，直接出文件夹：
+
+1. **Intake** — 识别内容品类（自动推断）
+2. **Content Plan** — 内容规划（压缩阶梯+页面角色+节奏规划）
+3. **Compose** — 组装 HTML（双风格+10 主题+28 布局）
+4. **Validate** — 自检（密度+图片+节奏+风格）
+5. **Screenshot & Deliver** — 截图交付（本地文件夹+飞书云盘）
+
+## 文件结构
 
 ```
 xhs-crafter/
@@ -75,6 +74,110 @@ xhs-crafter/
 | 游戏 | Editorial (dark) | Midnight Ink |
 | 美食 | Editorial | Kraft Paper |
 
-## License
+## 文档
 
-MIT
+| 文件 | 用途 |
+|------|------|
+| [SKILL.md](SKILL.md) | 技能主文件，5 步工作流+密度铁律+节奏铁律 |
+| [references/style-system.md](references/style-system.md) | Editorial vs Swiss 视觉锚点+身份测试 |
+| [references/components.md](references/components.md) | 字体/字号/间距规范（唯一权威来源） |
+| [references/layout-recipes.md](references/layout-recipes.md) | 28 种布局模板详细说明 |
+| [references/theme-presets.md](references/theme-presets.md) | 10 套主题色 CSS 变量定义 |
+| [references/category-cookbook.md](references/category-cookbook.md) | 7 品类风格/主题/版式映射 |
+| [references/portrait-fill.md](references/portrait-fill.md) | 3:4 密度规则+三层节奏系统 |
+| [CHANGELOG.md](CHANGELOG.md) | 版本变更记录 |
+
+License: MIT-0
+
+---
+
+# xhs-crafter
+
+Convert Markdown articles into beautifully designed 3:4 ratio image cards + compressed text drafts for WeChat Official Account / Xiaohongshu (Little Red Book) image-post publishing.
+
+[![version](https://img.shields.io/badge/version-7.0.1-blue)](https://github.com/EdwardWason/xhs-crafter)
+[![license](https://img.shields.io/badge/license-MIT--0-green)](LICENSE)
+[![ClawHub](https://img.shields.io/badge/ClawHub-xhs--crafter-orange)](https://clawhub.ai/EdwardWason/xhs-crafter)
+
+## Features
+
+- **MD → Image Cards**: Automatically split and layout Markdown articles into multiple 1080x1440 (3:4) HTML pages, screenshot as PNG
+- **Dual Style System**: Editorial Magazine (serif + warm paper) and Swiss International (sans-serif + white + single accent)
+- **10 Theme Presets**: Ink Classic / Indigo Porcelain / Forest Ink / Kraft Paper / Dune / Midnight Ink / IKB Blue / Lemon Yellow / Lemon Green / Safety Orange
+- **28 Layout Templates**: M01-M16 (Editorial) + S01-S12 (Swiss)
+- **Three-Layer Rhythm System**: Light/dark alternation + atmosphere intensity + layout diversity
+- **Density Rules**: Active composition >= 78% canvas height, ensuring information density
+- **Text Compression**: Preserve original quotes + scene descriptions, compress to <= 1000 characters
+- **Dual Delivery**: Local folder + Feishu cloud drive sync
+
+## Quick Start
+
+```bash
+npx clawhub@latest install EdwardWason/xhs-crafter
+```
+
+## Usage
+
+In TRAE / Claude Code / OpenClaw, simply provide an MD file path to trigger:
+
+```
+Please use xhs-crafter to layout this article: /path/to/article.md
+```
+
+5-step fully automated workflow — just give MD, get output folder:
+
+1. **Intake** — Identify content category (auto-inferred)
+2. **Content Plan** — Content planning (compression ladder + page roles + rhythm planning)
+3. **Compose** — Assemble HTML (dual style + 10 themes + 28 layouts)
+4. **Validate** — Self-check (density + images + rhythm + style)
+5. **Screenshot & Deliver** — Screenshot delivery (local folder + Feishu cloud drive)
+
+## File Structure
+
+```
+xhs-crafter/
+├── SKILL.md                              # Main skill file (entry point)
+├── assets/
+│   ├── template-editorial-card.html      # Editorial seed template
+│   ├── template-swiss-card.html          # Swiss seed template
+│   └── screenshot.js                     # Puppeteer screenshot script
+└── references/
+    ├── style-system.md                   # Editorial vs Swiss identity test + anti-patterns
+    ├── category-cookbook.md              # 7-category routing table
+    ├── content-planning.md               # Compression ladder + page roles + hook patterns
+    ├── portrait-fill.md                  # 3:4 density rules + three-layer rhythm system
+    ├── image-overlay.md                  # Text-on-image rules
+    ├── theme-presets.md                  # 10 theme CSS variable definitions
+    ├── components.md                     # Font/size/spacing spec (authoritative source)
+    ├── layout-recipes.md                 # 28 layout template details
+    ├── screenshot-treatment.md           # Screenshot framing spec
+    ├── image-sources.md                  # Image API integration
+    └── workflow.md                       # Workflow detailed reference
+```
+
+## Category Mapping
+
+| Category | Style | Theme |
+|----------|-------|-------|
+| Business/Tech Analysis | Editorial | Indigo Porcelain |
+| Career/Productivity | Swiss | IKB Blue |
+| Travel/Lifestyle | Editorial | Kraft Paper |
+| Tutorial/Tools | Swiss | IKB Blue |
+| Film/Books | Editorial | Ink Classic |
+| Gaming | Editorial (dark) | Midnight Ink |
+| Food | Editorial | Kraft Paper |
+
+## Documentation
+
+| File | Purpose |
+|------|---------|
+| [SKILL.md](SKILL.md) | Main skill file, 5-step workflow + density rules + rhythm rules |
+| [references/style-system.md](references/style-system.md) | Editorial vs Swiss visual anchors + identity test |
+| [references/components.md](references/components.md) | Font/size/spacing spec (authoritative source) |
+| [references/layout-recipes.md](references/layout-recipes.md) | 28 layout template details |
+| [references/theme-presets.md](references/theme-presets.md) | 10 theme CSS variable definitions |
+| [references/category-cookbook.md](references/category-cookbook.md) | 7-category style/theme/layout mapping |
+| [references/portrait-fill.md](references/portrait-fill.md) | 3:4 density rules + three-layer rhythm system |
+| [CHANGELOG.md](CHANGELOG.md) | Version change log |
+
+License: MIT-0

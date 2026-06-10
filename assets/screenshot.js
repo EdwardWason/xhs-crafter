@@ -21,11 +21,11 @@ const TARGETS = pageIds.map((id, i) => {
   return [`#${id}`, `p${num}.png`];
 });
 
-// Find Chrome
+// Find Chrome — use env vars and standard locations (no hardcoded user paths)
 const CHROME_PATHS = [
   process.env.CHROME_PATH,
-  'C:\\Users\\Administrator\\AppData\\Local\\ms-playwright\\chromium-1208\\chrome-win64\\chrome.exe',
-  'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+  process.env.LOCALAPPDATA && path.join(process.env.LOCALAPPDATA, 'ms-playwright', 'chromium-1208', 'chrome-win64', 'chrome.exe'),
+  process.env.PROGRAMFILES && path.join(process.env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe'),
 ].filter(Boolean);
 
 const chromePath = CHROME_PATHS.find(p => {
