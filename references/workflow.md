@@ -1,100 +1,82 @@
 # XHS Crafter 工作流详细参考
 
+> v7 — 5步全自动工作流，文件夹+飞书云盘双通道交付
+
 ## 完整流程
 
 ```
 MD文章输入
-  ↓ 1. 内容分析 & 拆分
-  ↓ 2. 调用 frontend-skill 设计排版
-  ↓ 3. 生成多个3:4 HTML页面
-  ↓ 4. 文字压缩(<=1000字)
-  ↓ 5. Puppeteer截图为PNG
-  ↓ 6. 打包zip交付
+  ↓ Step 1: Intake — 识别品类（脑内完成）
+  ↓ Step 2: Content Plan — 内容规划（脑内完成）
+  ↓ Step 3: Compose — 组装HTML（直接执行）
+  ↓ Step 4: Validate — 自检（自动执行）
+  ↓ Step 5: Screenshot & Deliver — 截图交付（直接执行）
 ```
 
-## Step 1: 内容分析 & 拆分
+## Step 1: Intake — 识别品类
 
-- 读取MD文章，识别章节结构
-- 确定页面数量：封面1页 + 每个核心章节1页 + 终章1页
-- 每页分配内容，确保信息密度与原文一致
-- 封面页：标题 + 副标题 + 视觉背景 + 元信息
-- 内容页：章节标题 + 核心论点 + 关键引言 + 数据网格
-- 终章页：收束总结 + 点睛引言
+- 读取MD内容，自动推断内容品类
+- 参考 `references/category-cookbook.md` 路由到对应风格/主题
+- 确定目标平台（默认小红书3:4）
+- 识别用户图片（MD中图片标记或指定截图文件夹）
+- 仅在品类无法推断时才问用户
 
-## Step 2: frontend-skill 排版设计
+## Step 2: Content Plan — 内容规划
 
-调用 frontend-skill 时，遵循其设计原则：
-- Visual thesis: 一句话描述风格
-- Content plan: 每页一个核心任务
-- Interaction thesis: 静态页面无需动效，但保持视觉层次
+- 参考 `references/content-planning.md`
+- 压缩阶梯：核心论点1句 → 读者承诺 → 4-8个分论点 → 页面钩子 → 正文片段
+- 页面角色分配：7页组图至少5种不同形态
+- 页面节奏规划：参考 `references/portrait-fill.md` 的"Three-Layer Rhythm System"
+- 5页及以上：封面和封底都必须有图片背景
 
-设计约束（3:4卡片模式，不同于长页面）：
-- 固定尺寸 1080x1440px
-- overflow:hidden，无滚动
-- 字号放大：正文24px，标题48-56px，数据44-56px
-- 内边距 72px
-- 数据网格用 2列 或 2x2 布局
+## Step 3: Compose — 组装HTML
 
-## Step 3: HTML页面生成
+- 拷贝种子模板：Editorial→ `assets/template-editorial-card.html`；Swiss→ `assets/template-swiss-card.html`
+- 设置 `data-theme` 或 `data-accent` 属性切换主题
+- 在 `<!-- POSTERS_HERE -->` 处添加页面
+- 满铺图页遵循 `references/image-overlay.md`
+- 密度保障：每页活跃构图≥78%画布高度
+- 节奏保障：暗色页插入、氛围强弱交替、版式不重复
+- **图片必须下载到本地**：Puppeteer headless无法可靠加载外部API图片
+  1. 用WebFetch获取API返回的CDN URL
+  2. 用curl下载到项目`assets/`目录
+  3. HTML中用本地相对路径引用
+  4. 禁止直接引用外部URL
 
-每个HTML文件独立完整，包含：
-- 内联CSS（不依赖外部样式表）
-- Google Fonts @import
-- 图片使用 `<img>` 标签（非CSS background-image）
-- 固定宽高：`html,body{width:1080px;height:1440px;overflow:hidden}`
+## Step 4: Validate — 自检
 
-文件命名：`p1-cover.html`, `p2-opening.html`, ..., `pN-finale.html`
+截图前自动检查，不通过则自动修复：
 
-## Step 4: 文字压缩
+- **密度检查**：每页活跃构图≥78% | 每页≥3种内容元素 | 纯空白带>216px需理由
+- **图片检查**：封面1秒说清主题 | 文字未压主体 | 无broken image
+- **节奏检查**：5页+至少1暗色页 | 暗色页不相邻 | 氛围强弱交替 | 版式不重复
+- **风格检查**（参考 `references/style-system.md`）
 
-压缩规则：
-- 保留每章1个核心论点 + 1个关键引言
-- 删除过渡句、解释性文字、重复表述
-- 数据由图片承载，文字中不重复
-- 章节标题作为骨架
-- 目标：<=1000字
-- 输出为 UTF-8 编码的 txt 文件
+## Step 5: Screenshot & Deliver — 截图交付
 
-## Step 5: Puppeteer截图
+### 截图
 
-### 依赖
-- puppeteer-core（不下载Chromium）
-- 系统已安装的 Chrome 或 Chromium
+- 用 `assets/screenshot.js` 截图（自动检测页面ID和Chrome路径）
+- 用法：先启动 `python -m http.server 8090`，然后 `node assets/screenshot.js <项目目录>`
+- puppeteer-core + 系统Chrome，deviceScaleFactor:2
+- 等待 networkidle0 + fonts.ready + 6秒（确保图片加载）
 
-### Chrome路径检测
-1. 注册表：`HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe`
-2. Fallback：`$env:LOCALAPPDATA\ms-playwright\chromium-*\chrome-win64\chrome.exe`
-3. Fallback：`C:\Program Files\Google\Chrome\Application\chrome.exe`
+### 文字压缩
 
-### 截图参数
-- viewport: 1080x1440
-- deviceScaleFactor: 2（2倍清晰度）
-- 等待策略：networkidle0 + document.fonts.ready + 额外3秒
-- 输出格式：PNG
-- clip: {x:0, y:0, width:1080, height:1440}
+- 保留原话引言+场景描述+核心数据，≤1000字
+- 压缩模板：标题(1句) → 场景开场(1-2句) → 核心论点(1-2句) → 关键原话(1-2条) → 数据支撑(3-5个数字) → 结尾原话(1条)
 
-### 截图脚本模板
-```javascript
-const puppeteer = require('puppeteer-core');
-const browser = await puppeteer.launch({
-  headless: 'new',
-  executablePath: '<detected-chrome-path>',
-  args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu']
-});
-const page = await browser.newPage();
-await page.setViewport({ width: 1080, height: 1440, deviceScaleFactor: 2 });
-await page.goto('file:///path/to/page.html', { waitUntil: 'networkidle0', timeout: 30000 });
-await page.evaluate(() => document.fonts.ready);
-await new Promise(r => setTimeout(r, 3000)); // 等待外部图片
-await page.screenshot({ path: 'output.png', type: 'png', clip: {x:0,y:0,width:1080,height:1440} });
-```
+### 交付方式：本地文件夹 + 飞书云盘同步
 
-## Step 6: 打包交付
+**A. 本地文件夹（首选）**
+1. 在 `$env:TEMP` 创建 `<slug>公众号素材/` 文件夹
+2. 将PNG+txt复制到该文件夹
+3. 用 `explorer.exe` 打开文件夹
 
-- 所有PNG + txt文字稿打包为zip
-- zip命名：`<主题>公众号素材.zip`
-- 存放位置：用户桌面
-- PowerShell命令：`Compress-Archive -Path <files> -DestinationPath "$env:USERPROFILE\Desktop\<name>.zip" -Force`
+**B. 飞书云盘同步（手机端访问）**
+1. 用 `lark-cli drive +create-folder` 创建文件夹
+2. cd到output目录，用 `lark-cli drive +upload` 逐个上传
+3. 返回飞书云盘文件夹URL
 
 ## 封面背景图问题修复
 
@@ -103,16 +85,5 @@ await page.screenshot({ path: 'output.png', type: 'png', clip: {x:0,y:0,width:10
 **解决方案**：
 - 使用 `<img>` 标签替代 CSS background-image
 - 用绝对定位 + object-fit:cover 实现全屏背景效果
-- 截图前等待 networkidle0 + 3秒缓冲
-
-```html
-<!-- 正确做法 -->
-<div style="position:relative;width:1080px;height:1440px;overflow:hidden">
-  <img src="https://..." style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(0.3)" />
-  <div style="position:absolute;inset:0;background:linear-gradient(...)"></div>
-  <div style="position:relative;z-index:2">内容</div>
-</div>
-
-<!-- 错误做法（可能不加载） -->
-<div style="background-image:url('https://...')">内容</div>
-```
+- 外部API图片必须先下载到本地assets/目录再引用
+- 截图前等待 networkidle0 + 6秒缓冲

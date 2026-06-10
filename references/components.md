@@ -167,12 +167,13 @@ Swiss:
 |------|-------|------|--------|--------|
 | Hero | `.h-hero` | 240px | 200 | sans |
 | Statement | `.h-statement` | 180px | 200 | sans |
-| Section title | `.h-xl` | 120px | 300 | sans |
-| Mid title | `.h-md` | 56px | 400 | sans |
-| Mega number | `.num-mega` | 200px | 200 | sans |
-| Lead | `.lead` | 30px | 400 | sans-zh |
-| Body | `.body` | 26px | 400 | sans-zh |
-| Category | `.t-cat` | 22px | 600 | sans |
+| Section title | `.h-xl` | 128px | 300 | sans |
+| Mid title | `.h-md` | 60px | 400 | sans |
+| Mega number | `.num-mega` | 216px | 200 | sans |
+| XL number | `.num-xl` | 156px | 200 | sans |
+| Lead | `.lead` | 32px | 400 | sans-zh |
+| Body | `.body` | 28px | 400 | sans-zh |
+| Category | `.t-cat` | 24px | 600 | sans |
 | Meta | `.t-meta` | 20px | 500 | mono |
 
 **CSS 示例：**
@@ -198,7 +199,7 @@ Swiss:
 
 .h-xl {
   font-family: var(--sans);
-  font-size: 120px;
+  font-size: 128px;
   font-weight: 300;
   line-height: 1;
   letter-spacing: -.02em;
@@ -207,7 +208,7 @@ Swiss:
 
 .h-md {
   font-family: var(--sans);
-  font-size: 56px;
+  font-size: 60px;
   font-weight: 400;
   line-height: 1.15;
   letter-spacing: normal;
@@ -216,16 +217,25 @@ Swiss:
 
 .num-mega {
   font-family: var(--sans);
-  font-size: 200px;
+  font-size: 216px;
   font-weight: 200;
   line-height: .9;
   letter-spacing: -.03em;
   color: var(--accent);
 }
 
+.num-xl {
+  font-family: var(--sans);
+  font-size: 156px;
+  font-weight: 200;
+  line-height: .9;
+  letter-spacing: -.02em;
+  color: var(--accent);
+}
+
 .lead {
   font-family: var(--sans-zh);
-  font-size: 30px;
+  font-size: 32px;
   font-weight: 400;
   line-height: 1.7;
   letter-spacing: normal;
@@ -234,7 +244,7 @@ Swiss:
 
 .body {
   font-family: var(--sans-zh);
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 400;
   line-height: 1.75;
   letter-spacing: normal;
@@ -243,7 +253,7 @@ Swiss:
 
 .t-cat {
   font-family: var(--sans);
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 600;
   letter-spacing: .12em;
   text-transform: uppercase;
@@ -284,9 +294,9 @@ Swiss:
 |----------|----------|------------|------|
 | 1–2 字 | 240px | `.h-hero` | 极简冲击，1–2 字 |
 | 3–4 字 | 180px | `.h-statement` | 声明式标题 |
-| 5–8 字 | 120px | `.h-xl` | 章节标题 |
-| 9–14 字 | 56px | `.h-md` | 中等标题 |
-| 15+ 字 | 30px | `.lead` | 长标题降级 |
+| 5–8 字 | 128px | `.h-xl` | 章节标题 |
+| 9–14 字 | 60px | `.h-md` | 中等标题 |
+| 15+ 字 | 32px | `.lead` | 长标题降级 |
 
 > **硬规则**：标题最多换行 2 次。如果预估会超过 2 行，必须降级到下一档字号。
 
