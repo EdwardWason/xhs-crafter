@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [7.1.0] - 2026-06-11
+
+### Added
+- Background systems reference (paper→wash→grain three-layer architecture, atmosphere intensity levels)
+- validate.js automated validation script (7 rules: overflow, footer collision, Swiss bold, min font size, 4-band density, h-xl line caps, figure margin)
+- Image source triage gate in Step 1 Intake (user image / web search / AI generation)
+- "Larger = Lighter" font weight iron rule to components.md
+- Title consistency iron rule (same role = same class across all pages)
+- Consecutive 3 same-theme pages = P0 error to rhythm rules
+- Hero title color rule: cover/finale must use #ffffff + text-shadow, not #ece2cf
+- Screenshot size anomaly detection in screenshot.js
+
+### Changed
+- Type scale increased ~15% for mobile readability (h-xl: 96→110px, body: 28→32px, kicker: 22→26px, meta: 20→24px)
+- Cover/finale titles use .h-display (136px) vs content pages .h-xl (110px) for visual hierarchy
+- Category cookbook expanded from 7 to 11 categories with outside-scope list
+- Theme presets: added hard rules (no custom hex, Lemon Green ≤20%)
+- Image sources: added Unsplash direct download method and AI image API same-placeholder verification
+- SKILL.md: added background systems reference, validate.js integration, screenshot size check, image download verification
+
 ## [7.0.1] - 2026-06-10
 
 ### Fixed

@@ -202,3 +202,94 @@ curl "https://wallhaven.cc/api/v1/search?q=nature&categories=111&purity=100&sort
 - `object-fit:contain` 保持完整但可能留白，适用于 UI 截图
 - 人像裁切时避免切到面部关键区域（眼睛、嘴巴）
 - 产品图裁切时确保产品主体完整可见
+
+---
+
+## Unsplash 直链下载（无需 API Key）
+
+当 AI 生图 API 返回相同占位图时，使用 Unsplash 直链作为备选方案。
+
+### 直链格式
+
+```
+https://images.unsplash.com/photo-{id}?w={width}&h={height}&fit=crop&auto=format&q={quality}
+```
+
+### 参数说明
+
+| 参数 | 推荐值 | 说明 |
+|------|--------|------|
+| `w` | 1080 | 宽度（像素） |
+| `h` | 1440 | 高度（像素，3:4比例） |
+| `fit` | crop | 裁切模式 |
+| `q` | 85 | JPEG质量（80-90） |
+
+### 常用主题图片 ID
+
+| 主题 | Photo ID | 描述 |
+|------|----------|------|
+| 深蓝科技抽象 | `1620712943543-bcc4688e7485` | 电路板/数据可视化风格 |
+| 暗夜星空 | `1534796636912-3b95b3ab5986` | 深蓝星空/宇宙 |
+| 极简办公 | `1497366216548-37526070297c` | 现代办公空间 |
+| 城市天际线 | `1477959858617-67f85cf4f1df` | 城市夜景 |
+| 自然纹理 | `1506905925346-21bda4d32df4` | 山脉/自然 |
+
+### 下载方法
+
+```javascript
+// Node.js 下载（推荐，支持重定向跟踪）
+const https = require('https');
+const fs = require('fs');
+
+function download(url, dest) {
+  return new Promise((resolve, reject) => {
+    const follow = (u, redirects = 0) => {
+      if (redirects > 10) return reject(new Error('Too many redirects'));
+      https.get(u, { headers: { 'User-Agent': 'Mozilla/5.0' } }, (res) => {
+        if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+          return follow(res.headers.location, redirects + 1);
+        }
+        const file = fs.createWriteStream(dest);
+        res.pipe(file);
+        file.on('finish', () => { file.close(); resolve(fs.statSync(dest).size); });
+      }).on('error', reject);
+    };
+    follow(url);
+  });
+}
+```
+
+```bash
+# curl 下载（需用 curl.exe 而非 PowerShell 的 curl 别名）
+curl.exe -s -L -o "assets/cover.jpg" "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1080&h=1440&fit=crop&auto=format&q=85"
+```
+
+---
+
+## AI 生图验证规则
+
+### 问题：AI 生图 API 可能返回相同占位图
+
+`trae-api-cn.mchost.guru` 的 `text_to_image` API 无论 prompt 如何不同，可能返回完全相同的占位图。两个不同的 CDN URL 不代表图片内容不同。
+
+### 验证方法
+
+```javascript
+const fs = require('fs');
+const b1 = fs.readFileSync('assets/cover.jpg');
+const b2 = fs.readFileSync('assets/finale.jpg');
+
+// 必须验证：两张图文件内容不同
+if (b1.equals(b2)) {
+  console.error('ERROR: cover.jpg and finale.jpg are identical!');
+  console.error('AI image API returned same placeholder. Switch to Unsplash.');
+  // 换用 Unsplash 直链下载
+}
+```
+
+### 铁律
+
+1. **下载多张图片后必须验证唯一性**：`buf1.equals(buf2) === false`
+2. **如果两张图完全相同，立即换用 Unsplash**：不要反复重试 AI 生图 API
+3. **禁止假设 URL 不同 = 内容不同**：CDN URL 的签名和路径不同不代表图片内容不同
+4. **验证时机**：在 Step 3 Compose 组装 HTML 之前，确保所有图片文件已验证有效

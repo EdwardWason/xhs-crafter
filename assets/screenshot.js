@@ -28,6 +28,20 @@ const CHROME_PATHS = [
   process.env.PROGRAMFILES && path.join(process.env.PROGRAMFILES, 'Google', 'Chrome', 'Application', 'chrome.exe'),
 ].filter(Boolean);
 
+// Auto-detect Playwright chromium versions
+if (process.env.LOCALAPPDATA) {
+  try {
+    const pwDir = path.join(process.env.LOCALAPPDATA, 'ms-playwright');
+    if (fs.existsSync(pwDir)) {
+      const dirs = fs.readdirSync(pwDir).filter(d => d.startsWith('chromium-'));
+      for (const d of dirs) {
+        const candidate = path.join(pwDir, d, 'chrome-win64', 'chrome.exe');
+        CHROME_PATHS.push(candidate);
+      }
+    }
+  } catch {}
+}
+
 const chromePath = CHROME_PATHS.find(p => {
   try { fs.accessSync(p); return true; } catch { return false; }
 });
@@ -36,8 +50,13 @@ if (!chromePath) {
   console.error('Chrome not found. Set CHROME_PATH env var.');
   process.exit(1);
 }
+console.log(`Chrome: ${chromePath}`);
 
 const PORT = process.env.PORT || 8090;
+
+// ── Size anomaly thresholds ──
+const SIZE_WARN_COVER = 500;  // KB — cover/finale with bg image should be >500KB
+const SIZE_WARN_TEXT  = 200;  // KB — text-only page should be >200KB
 
 (async () => {
   const browser = await puppeteer.launch({
@@ -61,15 +80,35 @@ const PORT = process.env.PORT || 8090;
   }, pageIds);
   console.log('Elements:', found);
 
-  for (const [sel, fname] of TARGETS) {
+  const warnings = [];
+
+  for (let i = 0; i < TARGETS.length; i++) {
+    const [sel, fname] = TARGETS[i];
     const el = await page.$(sel);
     if (!el) { console.error(`NOT FOUND: ${sel}`); continue; }
     const fp = path.join(OUT, fname);
     await el.screenshot({ path: fp, type: 'png' });
     const kb = Math.round(fs.statSync(fp).size / 1024);
-    console.log(`OK: ${fname} (${kb}KB)`);
+    const isCoverOrFinale = (i === 0 || i === TARGETS.length - 1);
+    const threshold = isCoverOrFinale ? SIZE_WARN_COVER : SIZE_WARN_TEXT;
+
+    let status = 'OK';
+    if (kb < threshold) {
+      status = 'WARN';
+      const reason = isCoverOrFinale
+        ? `Cover/finale only ${kb}KB — background image may not have rendered`
+        : `Page only ${kb}KB — content may be missing`;
+      warnings.push(`${fname}: ${reason}`);
+    }
+    console.log(`${status}: ${fname} (${kb}KB)`);
+  }
+
+  if (warnings.length > 0) {
+    console.log('\n⚠️  SIZE WARNINGS:');
+    warnings.forEach(w => console.log(`  - ${w}`));
+    console.log('  → Check that background images are valid and different from each other');
   }
 
   await browser.close();
-  console.log(`Done! ${TARGETS.length} screenshots in ${OUT}`);
+  console.log(`\nDone! ${TARGETS.length} screenshots in ${OUT}`);
 })();

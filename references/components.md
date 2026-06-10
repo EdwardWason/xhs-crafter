@@ -49,6 +49,22 @@ Swiss:
 
 ## 二、Type Scale
 
+### 字重铁律："越大越轻"
+
+字号越大，字重越轻；字号越小，字重越重。这是印刷行业的百年传统——大标题用轻字重保持优雅，小文字用重字重保证可读。
+
+| 字号范围 | 字重 | 原因 |
+|---------|------|------|
+| ≥110px（Display/XL） | 500 | 大字号本身已有视觉重量，500足够醒目 |
+| 60-80px（MD/Pull Quote） | 500 | 中等字号需要适度加粗维持存在感 |
+| 32-46px（Lead/Body/Sub） | 400 | 阅读字号，400最舒适 |
+| 24-26px（Kicker/Meta/Label） | 500 | 小字号必须加粗才能在缩放后可读 |
+
+**反模式**：
+- 大标题用 700/900 字重 → 像PPT不像杂志
+- 正文用 300 字重 → 手机端模糊不可读
+- Swiss 大标题用 600 → 破坏极简感，Swiss 大标题必须 ≤300
+
 ### Editorial Magazine（3:4 默认 1080×1440）
 
 > **权威定义**：本文档为字号/间距的唯一权威来源，模板必须与本文档保持一致。
@@ -56,19 +72,19 @@ Swiss:
 | Role | Class | Size | Weight | Tracking | Family |
 |------|-------|------|--------|----------|--------|
 | Display | `.h-display` | 136px | 500 | +.04em | serif-zh |
-| Section title | `.h-xl` | 96px | 500 | +.03em | serif-zh |
-| Mid title | `.h-md` | 52px | 500 | +.02em | serif-zh |
-| Subtitle | `.h-sub` | 40px | 400 italic | normal | serif-en |
-| Pull quote | `.pullquote` | 70px | 500 italic | normal | serif-zh |
-| Lead | `.lead` | 30px | 400 | normal | serif-zh |
-| Body | `.body` | 28px | 400 | normal | serif-zh |
-| Kicker | `.kicker` | 22px | 500 | +.22em | mono |
-| Meta | `.meta` | 20px | 500 | +.20em | mono |
-| Label | `.label` | 20px | 500 | +.20em | mono |
-| Stat number | `.stat-nb` | 60px | 500 | normal | serif-zh |
-| Step title | `.step-title` | 30px | 500 | normal | serif-zh |
-| Step desc | `.step-desc` | 24px | 400 | normal | serif-zh |
-| Ledger title | `.ledger-title` | 26px | 500 | normal | serif-zh |
+| Section title | `.h-xl` | 110px | 500 | +.03em | serif-zh |
+| Mid title | `.h-md` | 60px | 500 | +.02em | serif-zh |
+| Subtitle | `.h-sub` | 46px | 400 italic | normal | serif-en |
+| Pull quote | `.pullquote` | 80px | 500 italic | normal | serif-zh |
+| Lead | `.lead` | 34px | 400 | normal | serif-zh |
+| Body | `.body` | 32px | 400 | normal | serif-zh |
+| Kicker | `.kicker` | 26px | 500 | +.22em | mono |
+| Meta | `.meta` | 24px | 500 | +.20em | mono |
+| Label | `.label` | 24px | 500 | +.20em | mono |
+| Stat number | `.stat-nb` | 72px | 500 | normal | serif-zh |
+| Step title | `.step-title` | 34px | 500 | normal | serif-zh |
+| Step desc | `.step-desc` | 28px | 400 | normal | serif-zh |
+| Ledger title | `.ledger-title` | 30px | 500 | normal | serif-zh |
 
 **CSS 示例：**
 
@@ -84,7 +100,7 @@ Swiss:
 
 .h-xl {
   font-family: var(--serif-zh);
-  font-size: 96px;
+  font-size: 110px;
   font-weight: 500;
   letter-spacing: .03em;
   line-height: 1.15;
@@ -93,7 +109,7 @@ Swiss:
 
 .h-md {
   font-family: var(--serif-zh);
-  font-size: 52px;
+  font-size: 60px;
   font-weight: 500;
   letter-spacing: .02em;
   line-height: 1.2;
@@ -102,7 +118,7 @@ Swiss:
 
 .h-sub {
   font-family: var(--serif-en);
-  font-size: 40px;
+  font-size: 46px;
   font-weight: 400;
   font-style: italic;
   letter-spacing: normal;
@@ -112,7 +128,7 @@ Swiss:
 
 .pullquote {
   font-family: var(--serif-zh);
-  font-size: 70px;
+  font-size: 80px;
   font-weight: 500;
   font-style: italic;
   letter-spacing: normal;
@@ -122,7 +138,7 @@ Swiss:
 
 .lead {
   font-family: var(--serif-zh);
-  font-size: 30px;
+  font-size: 34px;
   font-weight: 400;
   letter-spacing: normal;
   line-height: 1.7;
@@ -131,7 +147,7 @@ Swiss:
 
 .body {
   font-family: var(--serif-zh);
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 400;
   letter-spacing: normal;
   line-height: 1.8;
@@ -140,7 +156,7 @@ Swiss:
 
 .kicker {
   font-family: var(--mono);
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 500;
   letter-spacing: .22em;
   text-transform: uppercase;
@@ -150,7 +166,7 @@ Swiss:
 
 .meta {
   font-family: var(--mono);
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 500;
   letter-spacing: .20em;
   text-transform: uppercase;
@@ -158,6 +174,20 @@ Swiss:
   color: var(--muted);
 }
 ```
+
+### 封面/封底满铺图页标题颜色
+
+封面和封底使用满铺背景图时，标题必须使用纯白色 + text-shadow，确保与任何背景图都有足够对比度：
+
+```css
+.hero-content .h-display { color: #ffffff; text-shadow: 0 2px 16px rgba(0,0,0,.45); }
+.hero-content .h-xl { color: #ffffff; text-shadow: 0 2px 12px rgba(0,0,0,.35); }
+```
+
+**硬规则**：
+- 满铺图页标题禁止使用 `#ece2cf`（暖米色）——与暖调背景图太接近
+- 必须使用 `#ffffff`（纯白）+ `text-shadow` 确保可读性
+- text-shadow 不可省略——纯白字在亮色区域仍需阴影托底
 
 ---
 
@@ -278,15 +308,29 @@ Swiss:
 
 中文标题字数与字号的映射关系——字数越多，字号越小，保证标题不换行或至多换一行。
 
+### 标题一致性铁律
+
+**同一套卡片中，所有内容页主标题必须使用同一字号 class。**
+
+| 页面类型 | Editorial | Swiss | 说明 |
+|---------|-----------|-------|------|
+| 封面 (P01) | `.h-display` 136px | `.h-hero`/`.h-statement` | 允许更大字号 |
+| 内容页 (P02-P08) | `.h-xl` 110px | `.h-xl` 128px | **必须统一** |
+| 封底 (P09) | `.h-display` 136px | 视设计而定 | 与封面同级，形成"书挡" |
+
+**适配方法**：标题太长时拆为两行（`<br>`），太短时加副标题增加视觉重量。**不得降级到 `.h-md`**。
+
+**反模式**：不同内容页混用 `.h-xl` 和 `.h-md` → 视觉不统一，用户一眼看出不一致。
+
 ### Editorial Magazine
 
 | 字数范围 | 推荐字号 | 使用 Class | 备注 |
 |----------|----------|------------|------|
-| 1–3 字 | 124px | `.h-display` | 单字 / 双字标题，最大冲击 |
-| 4–6 字 | 88px | `.h-xl` | 常规章节标题 |
-| 7–10 字 | 56px | `.h-md` | 中等长度标题 |
-| 11–16 字 | 36px | `.h-sub` | 长标题，降级为副标题尺度 |
-| 17+ 字 | 28px | `.lead` | 超长标题，按 lead 处理 |
+| 1–3 字 | 136px | `.h-display` | 单字 / 双字标题，最大冲击 |
+| 4–6 字 | 110px | `.h-xl` | 常规章节标题 |
+| 7–10 字 | 60px | `.h-md` | 中等长度标题 |
+| 11–16 字 | 46px | `.h-sub` | 长标题，降级为副标题尺度 |
+| 17+ 字 | 34px | `.lead` | 超长标题，按 lead 处理 |
 
 ### Swiss International
 
