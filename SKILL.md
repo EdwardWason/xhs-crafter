@@ -51,6 +51,34 @@ description: "将MD文章排版为3:4比例的精美图片+压缩文字稿，用
 - 拷贝种子模板：Editorial→ `assets/template-editorial-card.html`；Swiss→ `assets/template-swiss-card.html`
 - 设置 `data-theme` 或 `data-accent` 属性切换主题
 - 在 `<!-- POSTERS_HERE -->` 处添加页面
+
+**字号速查表（必须严格遵循，不得自行调整）**：
+
+| Role | Class | Size | Weight | Family | 用途 |
+|------|-------|------|--------|--------|------|
+| Display | `.h-display` | 136px | 500 | serif-zh | 封面/封底主标题 |
+| Section title | `.h-xl` | 110px | 500 | serif-zh | 内容页主标题（必须统一） |
+| Mid title | `.h-md` | 60px | 500 | serif-zh | 次级标题/数据页标题 |
+| Subtitle | `.h-sub` | 46px | 400 italic | serif-en | 英文副标题 |
+| Pull quote | `.pullquote` | 80px | 500 italic | serif-zh | 引言页大字引语 |
+| Lead | `.lead` | 34px | 400 | serif-zh | 导语/段落首句 |
+| Body | `.body` | 32px | 400 | serif-zh | 正文段落 |
+| Kicker | `.kicker` | 26px | 500 | mono | 页面顶部标签 |
+| Meta | `.meta` | 24px | 500 | mono | 页面底部注释 |
+| Label | `.label` | 24px | 500 | mono | 数据标签 |
+| Stat number | `.stat-nb` | 72px | 500 | serif-zh | 大数字 |
+| Step title | `.step-title` | 34px | 500 | serif-zh | 流程步骤标题 |
+| Step desc | `.step-desc` | 28px | 400 | serif-zh | 流程步骤描述 |
+| Ledger title | `.ledger-title` | 30px | 500 | serif-zh | 表格行标题 |
+| 辅助文字 | — | 22px | 500 | mono | stat-label/stat-unit/ledger-note/step-nb/callout-src/issue-strip |
+
+**字号铁律**：
+1. **内容页主标题必须统一用 `.h-xl` 110px**——不得混用 `.h-md`，标题太长拆行而非降级
+2. **封面/封底主标题用 `.h-display` 136px**——比内容页大24%，形成"书挡"层级
+3. **满铺图页标题颜色必须 `#ffffff` + `text-shadow`**——禁止 `#ece2cf`（与暖调背景太接近）
+4. **字重"越大越轻"**：≥110px用500，60-80px用500，32-46px用400，24-26px用500
+5. **任何文字不得低于18px**
+
 - **满铺图页必须遵循 `references/image-overlay.md`**：选图→无遮罩构图→局部色调遮罩→缩略图检查
 - **密度保障**：每页活跃构图≥78%画布高度，读 `references/portrait-fill.md`
 - **节奏保障**：暗色页插入、氛围强弱交替、版式不重复
@@ -115,7 +143,7 @@ description: "将MD文章排版为3:4比例的精美图片+压缩文字稿，用
 
 ## 标题一致性铁律（非协商）
 
-1. **内容页主标题统一字号**：所有内容页（P02-P08）的主标题必须使用同一个 class（Editorial 用 `.h-xl` 96px，Swiss 用 `.h-xl` 128px）
+1. **内容页主标题统一字号**：所有内容页（P02-P08）的主标题必须使用同一个 class（Editorial 用 `.h-xl` 110px，Swiss 用 `.h-xl` 128px）
 2. **封面允许更大字号**：封面用 `.h-display`（Editorial 136px）或 `.h-hero`/`.h-statement`（Swiss）
 3. **通过拆行适配而非降级字号**：标题太长时拆为两行，太短时加副标题增加视觉重量，不得降级到 `.h-md`
 4. **不得混用不同级别标题 class**：同一套卡片中，内容页主标题不得混用 `.h-xl` 和 `.h-md`
