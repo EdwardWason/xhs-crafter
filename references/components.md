@@ -201,10 +201,10 @@ Swiss:
 | Mid title | `.h-md` | 60px | 400 | sans |
 | Mega number | `.num-mega` | 216px | 200 | sans |
 | XL number | `.num-xl` | 156px | 200 | sans |
-| Lead | `.lead` | 32px | 400 | sans-zh |
-| Body | `.body` | 28px | 400 | sans-zh |
-| Category | `.t-cat` | 24px | 600 | sans |
-| Meta | `.t-meta` | 20px | 500 | mono |
+| Lead | `.lead` | 34px | 400 | sans-zh |
+| Body | `.body` | 32px | 400 | sans-zh |
+| Category | `.t-cat` | 26px | 600 | sans |
+| Meta | `.t-meta` | 24px | 500 | mono |
 
 **CSS 示例：**
 
@@ -265,7 +265,7 @@ Swiss:
 
 .lead {
   font-family: var(--sans-zh);
-  font-size: 32px;
+  font-size: 34px;
   font-weight: 400;
   line-height: 1.7;
   letter-spacing: normal;
@@ -274,7 +274,7 @@ Swiss:
 
 .body {
   font-family: var(--sans-zh);
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 400;
   line-height: 1.75;
   letter-spacing: normal;
@@ -283,7 +283,7 @@ Swiss:
 
 .t-cat {
   font-family: var(--sans);
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 600;
   letter-spacing: .12em;
   text-transform: uppercase;
@@ -293,7 +293,7 @@ Swiss:
 
 .t-meta {
   font-family: var(--mono);
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 500;
   letter-spacing: .08em;
   text-transform: uppercase;

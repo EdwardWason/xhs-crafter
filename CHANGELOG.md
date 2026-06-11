@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [7.2.0] - 2026-06-11
+
+### Added
+- validate.js R8: title consistency check (content pages must use same title class)
+- validate.js R9: hero title color check (no #ece2cf in hero-content headings)
+
+### Changed
+- SKILL.md: category-cookbook reference updated from "7个品类" to "11个品类"
+- SKILL.md: validate rule count updated from 7 to 9
+- Swiss template font sizes synced with Editorial: body 28→32px, lead 32→34px, t-cat 24→26px, t-meta 20→24px
+- components.md Swiss section updated to match new sizes
+
 ## [7.1.1] - 2026-06-11
 
 ### Changed

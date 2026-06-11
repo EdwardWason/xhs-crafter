@@ -110,8 +110,8 @@ description: "将MD文章排版为3:4比例的精美图片+压缩文字稿，用
 - [ ] 无文字溢出/footer碰撞
 
 **自动验证**（读 `assets/validate.js`）：
-- 运行 `node assets/validate.js <项目目录>` 执行 7 项自动检查
-- R1 溢出检查 / R2 footer碰撞 / R3 Swiss粗体 / R4 最小字号 / R5 4横带密度 / R6 h-xl换行 / R7 figure margin
+- 运行 `node assets/validate.js <项目目录>` 执行 9 项自动检查
+- R1 溢出检查 / R2 footer碰撞 / R3 Swiss粗体 / R4 最小字号 / R5 4横带密度 / R6 h-xl换行 / R7 figure margin / R8 标题一致性 / R9 满铺图页标题颜色
 - FAIL 项必须修复后才能交付，WARN 项为建议
 
 ### Step 5: Screenshot & Deliver — 截图交付（直接执行）
@@ -171,7 +171,7 @@ description: "将MD文章排版为3:4比例的精美图片+压缩文字稿，用
 | 文件 | 用途 |
 |------|------|
 | `references/style-system.md` | **风格系统**：Editorial vs Swiss视觉锚点+身份测试+反模式 |
-| `references/category-cookbook.md` | **品类路由表**：7个品类的风格/主题/版式/图源映射 |
+| `references/category-cookbook.md` | **品类路由表**：11个品类的风格/主题/版式/图源映射 |
 | `references/content-planning.md` | **内容规划**：压缩阶梯+页面角色+钩子模式+页数指导 |
 | `references/portrait-fill.md` | **3:4密度规则**：垂直分区+密度铁律+稀疏页修复 |
 | `references/image-overlay.md` | **文字压图**：选图→无遮罩→局部色调→缩略图检查+主体避让 |

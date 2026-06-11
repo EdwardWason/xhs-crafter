@@ -1,6 +1,6 @@
 /**
  * xhs-crafter 自动验证脚本
- * 检查 7 项规则，FAIL 阻止交付，WARN 为建议
+ * 检查 9 项规则，FAIL 阻止交付，WARN 为建议
  *
  * 用法：node validate.js <项目目录>
  *   项目目录需包含 index.html 和 output/ 目录
@@ -118,6 +118,60 @@ if (!hasFigureReset) {
   fail('R7', 'Missing figure { margin: 0 } reset — browser defaults will add spacing');
 } else {
   pass('R7', 'Figure margin reset present');
+}
+
+// ── R8: Title consistency — content pages must use same title class ──
+// Find all poster divs and check their h-xl/h-md/h-display usage
+const posterBlocks = [...html.matchAll(/class="poster[^"]*"[^>]*id="([^"]*)"[^>]*>([\s\S]*?)(?=<div class="poster|$)/g)];
+const contentTitleClasses = [];
+for (const match of posterBlocks) {
+  const pageId = match[1];
+  const pageContent = match[2];
+  // Skip cover (p1/xhs-1) and finale (last page)
+  const pageNum = parseInt(pageId.replace(/xhs-|p/g, ''));
+  const totalPages = posterBlocks.length;
+  if (pageNum === 1 || pageNum === totalPages) continue;
+  // Find the first major heading class
+  const hMatch = pageContent.match(/class="(h-xl|h-md|h-display|h-hero|h-statement)"/);
+  if (hMatch) {
+    contentTitleClasses.push({ page: pageId, cls: hMatch[1] });
+  }
+}
+const uniqueClasses = [...new Set(contentTitleClasses.map(t => t.cls))];
+if (uniqueClasses.length > 1) {
+  const details = contentTitleClasses.map(t => `${t.page}=${t.cls}`).join(', ');
+  fail('R8', `Content pages use mixed title classes: ${details} — all content pages must use the same class (h-xl for Editorial, h-xl for Swiss)`);
+} else if (contentTitleClasses.length > 0) {
+  pass('R8', `All ${contentTitleClasses.length} content pages use consistent title class: ${uniqueClasses[0]}`);
+} else {
+  pass('R8', 'No content page titles found (skipped)');
+}
+
+// ── R9: Hero title color — cover/finale must not use #ece2cf ──
+const heroSections = [...html.matchAll(/class="hero-content"[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/g)];
+let badHeroColor = false;
+for (const hero of heroSections) {
+  const heroHtml = hero[0];
+  // Check for #ece2cf in color or inline styles within hero-content
+  if (heroHtml.includes('#ece2cf') || heroHtml.includes('color: #ece2cf')) {
+    badHeroColor = true;
+    break;
+  }
+  // Also check if h-display/h-xl inside hero-content lacks #ffffff
+  const heroHeadings = heroHtml.match(/class="h-(display|xl)"[^>]*style="[^"]*color:\s*([^;"]+)/g);
+  if (heroHeadings) {
+    for (const h of heroHeadings) {
+      if (h.includes('#ece2cf') || h.includes('ece2cf')) {
+        badHeroColor = true;
+        break;
+      }
+    }
+  }
+}
+if (badHeroColor) {
+  fail('R9', 'Hero-content headings use #ece2cf — must use #ffffff + text-shadow for readability on background images');
+} else {
+  pass('R9', 'Hero-content heading colors are safe (no #ece2cf detected)');
 }
 
 // ── Screenshot size check ──
