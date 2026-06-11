@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [7.3.0] - 2026-06-11
+
+### Added
+- validate.js R10: dark page rhythm check (5+ pages need ≥1 dark page, no adjacent dark pages)
+- validate.js R11: accent color area check (Swiss ≤30%, Lemon Green ≤20%)
+- validate.js R12: cover/finale image background check (5+ page sets require image backgrounds on cover and finale)
+- SKILL.md: rhythm speed reference table (7 rules) embedded in Step 3 Compose
+- SKILL.md: density speed reference table (6 rules) embedded in Step 3 Compose
+- SKILL.md: image rules speed reference (8 rules) embedded in Step 3 Compose
+
+### Changed
+- SKILL.md: category count corrected from 11 to 13 (actual count in category-cookbook.md)
+- SKILL.md: validate rule count updated from 9 to 12
+- validate.js: rule count in header comment updated from 9 to 12
+
 ## [7.2.0] - 2026-06-11
 
 ### Added

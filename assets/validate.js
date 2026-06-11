@@ -1,6 +1,6 @@
 /**
  * xhs-crafter 自动验证脚本
- * 检查 9 项规则，FAIL 阻止交付，WARN 为建议
+ * 检查 12 项规则，FAIL 阻止交付，WARN 为建议
  *
  * 用法：node validate.js <项目目录>
  *   项目目录需包含 index.html 和 output/ 目录
@@ -172,6 +172,90 @@ if (badHeroColor) {
   fail('R9', 'Hero-content headings use #ece2cf — must use #ffffff + text-shadow for readability on background images');
 } else {
   pass('R9', 'Hero-content heading colors are safe (no #ece2cf detected)');
+}
+
+// ── R10: Dark page rhythm — 5+ pages need at least 1 dark page, no adjacent dark pages ──
+if (pageIds.length >= 5) {
+  const darkPages = [];
+  for (const id of pageIds) {
+    const pageMatch = html.match(new RegExp(`id="${id}"[^>]*([\\s\\S]*?)<\\/section>`));
+    if (pageMatch) {
+      const pageContent = pageMatch[0];
+      if (pageContent.includes('data-theme="midnight-ink"') || pageContent.includes('class="poster dark')) {
+        darkPages.push(id);
+      }
+    }
+  }
+  if (darkPages.length === 0) {
+    warn('R10', `No dark pages in ${pageIds.length}-page set — at least 1 Midnight Ink page recommended for rhythm`);
+  } else {
+    // Check for adjacent dark pages
+    const darkIndices = darkPages.map(dp => pageIds.indexOf(dp));
+    let adjacentDark = false;
+    for (let i = 1; i < darkIndices.length; i++) {
+      if (darkIndices[i] - darkIndices[i-1] === 1) {
+        adjacentDark = true;
+        break;
+      }
+    }
+    if (adjacentDark) {
+      fail('R10', 'Adjacent dark pages detected — dark pages must be separated by at least one light page');
+    } else {
+      pass('R10', `Dark page rhythm OK (${darkPages.length} dark page(s), none adjacent)`);
+    }
+  }
+} else {
+  pass('R10', 'Less than 5 pages, dark rhythm check skipped');
+}
+
+// ── R11: Accent color area check — Swiss accent ≤30%, Lemon Green ≤20% ──
+const isLemonGreen = html.includes('data-theme="lemon-green"') || html.includes('data-accent="lemon-green"');
+if (isSwiss || isLemonGreen) {
+  // Count accent-colored elements vs total content elements
+  const accentElements = (html.match(/color:\s*var\(--accent\)|background:\s*var\(--accent\)|class="[^"]*accent[^"]*"/g) || []).length;
+  const totalElements = (html.match(/class="[^"]*stat-nb|class="[^"]*label|class="[^"]*kicker|class="[^"]*t-cat|class="[^"]*card-accent/g) || []).length;
+  if (accentElements > 0 && totalElements > 0) {
+    const ratio = accentElements / (accentElements + totalElements);
+    const maxRatio = isLemonGreen ? 0.20 : 0.30;
+    if (ratio > maxRatio) {
+      warn('R11', `Accent color usage ~${Math.round(ratio*100)}% exceeds ${Math.round(maxRatio*100)}% limit${isLemonGreen ? ' (Lemon Green max 20%)' : ' (Swiss max 30%)'}`);
+    } else {
+      pass('R11', `Accent color usage ~${Math.round(ratio*100)}% within ${Math.round(maxRatio*100)}% limit`);
+    }
+  } else {
+    pass('R11', 'Accent usage check skipped (no accent elements found)');
+  }
+} else {
+  pass('R11', 'Not Swiss/Lemon Green, accent area check skipped');
+}
+
+// ── R12: Cover/finale must have image background for 5+ page sets ──
+if (pageIds.length >= 5) {
+  const firstPage = pageIds[0];
+  const lastPage = pageIds[pageIds.length - 1];
+  let missingCoverImg = false;
+  let missingFinaleImg = false;
+
+  for (const pid of [firstPage, lastPage]) {
+    const pageMatch = html.match(new RegExp(`id="${pid}"[\\s\\S]*?<\\/section>`));
+    if (pageMatch) {
+      const pageContent = pageMatch[0];
+      const hasHeroImg = pageContent.includes('hero-bleed') || pageContent.includes('class="hero') || pageContent.includes('background-image') || pageContent.includes('<img');
+      if (pid === firstPage && !hasHeroImg) missingCoverImg = true;
+      if (pid === lastPage && !hasHeroImg) missingFinaleImg = true;
+    }
+  }
+
+  if (missingCoverImg || missingFinaleImg) {
+    const missing = [];
+    if (missingCoverImg) missing.push('cover (P01)');
+    if (missingFinaleImg) missing.push('finale (P0' + pageIds.length + ')');
+    warn('R12', `5+ page set missing image background on: ${missing.join(', ')} — cover and finale should have image backgrounds (bookend effect)`);
+  } else {
+    pass('R12', 'Cover and finale both have image backgrounds');
+  }
+} else {
+  pass('R12', 'Less than 5 pages, cover/finale image check skipped');
 }
 
 // ── Screenshot size check ──
