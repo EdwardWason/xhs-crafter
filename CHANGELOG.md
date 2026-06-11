@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [7.1.1] - 2026-06-11
+
+### Changed
+- Embedded font size cheat sheet (15-level type scale) directly in SKILL.md Step 3 Compose for cross-session consistency
+- Fixed title consistency rule: h-xl 96px → 110px in SKILL.md iron rules section
+- Updated README.md: version badge 7.1.1, 11 categories, validate.js and background-systems.md in file structure
+- Added .claude-plugin/plugin.json for Claude Code metadata
+
 ## [7.1.0] - 2026-06-11
 
 ### Added
