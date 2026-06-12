@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [7.3.1] - 2026-06-12
+
+### Fixed
+- screenshot.js: auto-start http.server in project directory with random free port (no more manual server or wrong-project screenshots)
+- screenshot.js: disable browser cache + cache-bust URL timestamp (no more stale cover/finale images)
+- screenshot.js: verify page `<title>` matches expected title before screenshot (abort on mismatch)
+- screenshot.js: verify hero images loaded with naturalWidth check
+
 ## [7.3.0] - 2026-06-11
 
 ### Added
