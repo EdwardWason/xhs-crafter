@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## [7.6.0] - 2026-07-15
+
+### Fixed — ClawHub SkillSpector 第三轮 8 项 Findings 修复
+
+**过渡修补评估**：本轮 8 项 findings 无过渡修补。4 项 Google Fonts 是历史遗留问题（模板从一开始就引用外部字体）；3 项 Vague Triggers 是 v7.4.0 修复时未触及的；1 项 Missing User Warnings 是 Low 级别。v7.5.0 删除 image-search.js 是正确决策——本轮没有出现 v7.5.0 引入的新问题。
+
+**关键洞察**：v7.4.0 在 SKILL.md "声明"了 Google Fonts 外部依赖，但 SkillSpector 仍然标记为 finding——说明"在声明里承认" ≠ "可以保留"，必须移除外部依赖本身。
+
+### Changes
+
+- **Google Fonts 移除（4 项 findings 修复）**：
+  - `assets/template-editorial-card.html`: 删除 `<link rel="preconnect">` 和 Google Fonts CSS 引用，改为本地字体回退栈注释（CSS `:root` 变量已含 Noto Serif SC / Source Han Serif SC / Songti SC / PingFang SC 等系统字体 fallback）
+  - `assets/template-swiss-card.html`: 同上，删除 Google Fonts CDN 引用
+  - SKILL.md: 权限声明"网络访问"行移除 Google Fonts 描述；"外部网络依赖"段落更新为"v7.6 已移除 Google Fonts CDN 引用"
+  - README.md (中英): 同步更新外部网络依赖描述
+- **Vague Triggers 修复（3 项 findings，含 1 项 High）**：
+  - **High 级别修复**：SKILL.md 删除"按流程走一遍"/"全流程"批量授权规则——改为"同意门控铁律：每道门控必须独立询问，不得因模糊措辞批量授权"
+  - description 触发词收紧：从"用户要排版文章为图片、生成公众号贴图、小红书图文、文章转图片卡片"改为"用户明确说'xhs-crafter排版'、'用xhs-crafter转图片'、'公众号贴图排版'、'小红书图文卡片'"，并增加 Do NOT "用户只提到MD文件路径但未明确要求图片排版"
+  - README.md (中英): 触发示例从"直接提供 MD 文件路径即可触发"改为"明确要求图片排版时触发"
+- **Missing User Warnings 修复（1 项 Low）**：
+  - SKILL.md + references/workflow.md: 本地文件夹交付前增加"本地文件写入提示"——截图完成后告知用户交付路径，再继续后续步骤
+
+### Audit Result
+- ClawHub SkillSpector 第三轮 8 项 Findings：8/8 修复完成
+- Google Fonts 外部依赖：完全移除，模板使用系统字体栈
+- 批量授权规则：删除，改为独立门控铁律
+- 触发词精度：收紧到明确要求图片排版时触发
+
 ## [7.5.0] - 2026-07-15
 
 ### Fixed — 过渡修补回退（ClawHub SkillSpector 第二轮 9 项 Findings 修复）

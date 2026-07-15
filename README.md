@@ -2,7 +2,7 @@
 
 将 Markdown 文章排版为 3:4 比例的精美图片卡片 + 压缩文字稿，用于微信公众号/小红书贴图发布。
 
-[![版本](https://img.shields.io/badge/version-7.5.0-blue)](https://github.com/EdwardWason/xhs-crafter)
+[![版本](https://img.shields.io/badge/version-7.6.0-blue)](https://github.com/EdwardWason/xhs-crafter)
 [![许可证](https://img.shields.io/badge/license-MIT--0-green)](LICENSE)
 [![ClawHub](https://img.shields.io/badge/ClawHub-xhs--crafter-orange)](https://clawhub.ai/EdwardWason/xhs-crafter)
 
@@ -30,7 +30,7 @@
 - **图片搜索**：调用Pexels/Pixabay API搜索免费图库照片。⚠️ 仅搜索词和图片下载会发送到Pexels/Pixabay服务器，**不会上传文章原文**
 - **飞书云盘同步**：将生成PNG+文字稿上传到用户飞书云盘。⚠️ 上传即意味着内容离开本地，如文章包含未发布/敏感/专有内容请勿启用
 
-**外部网络依赖**：HTML模板引用Google Fonts加载字体，中国大陆可能无法访问，影响渲染效果但不影响功能。`trae-api-cn.mchost.guru`（AI生图API）仅限TRAE内部环境可用。
+**外部网络依赖**：v7.6 已移除 Google Fonts CDN 引用，模板使用系统字体回退栈（Noto Serif SC / Source Han Serif SC / Songti SC / PingFang SC / Consolas 等），完全本地渲染。`trae-api-cn.mchost.guru`（AI生图API）仅限TRAE内部环境可用。
 
 ## 快速开始
 
@@ -40,10 +40,10 @@ npx clawhub@latest install EdwardWason/xhs-crafter
 
 ## 使用方法
 
-在 TRAE / Claude Code / OpenClaw 中，直接提供 MD 文件路径即可触发：
+在 TRAE / Claude Code / OpenClaw 中，明确要求图片排版时触发：
 
 ```
-请用 xhs-crafter 对这篇文章排版：/path/to/article.md
+请用 xhs-crafter 把这篇 MD 文章排版为公众号贴图：/path/to/article.md
 ```
 
 5 步工作流，用户只需给 MD，直接出本地文件夹（外部能力需用户同意）：
@@ -118,7 +118,7 @@ License: MIT-0
 
 Convert Markdown articles into beautifully designed 3:4 ratio image cards + compressed text drafts for WeChat Official Account / Xiaohongshu (Little Red Book) image-post publishing.
 
-[![version](https://img.shields.io/badge/version-7.5.0-blue)](https://github.com/EdwardWason/xhs-crafter)
+[![version](https://img.shields.io/badge/version-7.6.0-blue)](https://github.com/EdwardWason/xhs-crafter)
 [![license](https://img.shields.io/badge/license-MIT--0-green)](LICENSE)
 [![ClawHub](https://img.shields.io/badge/ClawHub-xhs--crafter-orange)](https://clawhub.ai/EdwardWason/xhs-crafter)
 
@@ -146,7 +146,7 @@ Convert Markdown articles into beautifully designed 3:4 ratio image cards + comp
 - **Image search**: Calls Pexels/Pixabay API to search free stock photos. ⚠️ Only search keywords and image downloads are sent to Pexels/Pixabay servers — **article content is never uploaded**
 - **Feishu cloud-drive sync**: Uploads generated PNGs + text drafts to user's Feishu cloud drive. ⚠️ Uploading means content leaves the local machine — do not enable if the article contains unpublished/sensitive/proprietary material
 
-**External network dependencies**: HTML template references Google Fonts for font loading, which may be inaccessible in mainland China (affects rendering only, not functionality). `trae-api-cn.mchost.guru` (AI image generation API) is available only inside the TRAE internal environment.
+**External network dependencies**: v7.6 removed Google Fonts CDN references — templates now use system font fallback stacks (Noto Serif SC / Source Han Serif SC / Songti SC / PingFang SC / Consolas), fully local rendering. `trae-api-cn.mchost.guru` (AI image generation API) is available only inside the TRAE internal environment.
 
 ## Quick Start
 
@@ -156,10 +156,10 @@ npx clawhub@latest install EdwardWason/xhs-crafter
 
 ## Usage
 
-In TRAE / Claude Code / OpenClaw, simply provide an MD file path to trigger:
+In TRAE / Claude Code / OpenClaw, trigger by explicitly requesting image layout:
 
 ```
-Please use xhs-crafter to layout this article: /path/to/article.md
+Please use xhs-crafter to format this MD article as WeChat image cards: /path/to/article.md
 ```
 
 5-step workflow — just give MD, get local output folder (external capabilities require user consent):

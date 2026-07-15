@@ -13,7 +13,7 @@
 | One-line description | 将MD文章排版为3:4比例精美图片卡片+压缩文字稿，用于公众号/小红书贴图发布 |
 | GitHub | `https://github.com/<owner>/xhs-crafter` |
 | ClawHub slug | `xhs-crafter` |
-| Current version | 7.5.0 |
+| Current version | 7.6.0 |
 | Project directory | `<project-dir>/xhs-crafter` |
 | Tech stack | HTML / CSS / Node.js (Puppeteer screenshot + validate) |
 | License | MIT |
@@ -121,12 +121,13 @@ xhs-crafter/
 
 ### GitHub Repository
 - Repo: `EdwardWason/xhs-crafter`
-- Latest Release: v7.4.0 (v7.5.0 待发布)
+- Latest Release: v7.5.0 (v7.6.0 待发布)
 - Branch: main
 
 ### ClawHub
 | Version | Security | Notes |
 |---------|----------|-------|
+| 7.5.0 | CLEAN | 过渡修补回退 + workflow.md 残留引用块修复 |
 | 7.4.0 | CLEAN | ClawHub SkillSpector 17项 Findings 修复 |
 | 7.3.1 | CLEAN | screenshot.js 自动启动 http.server |
 | 7.3.0 | CLEAN | R10/R11/R12+速查表 |
