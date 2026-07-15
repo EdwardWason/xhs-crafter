@@ -1,6 +1,11 @@
 ---
 name: "xhs-crafter"
 description: "将MD文章排版为3:4比例的精美图片+压缩文字稿，用于公众号/小红书贴图发布。核心能力是本地MD→HTML→PNG渲染，可选能力是飞书云盘同步（需用户明确同意）。Invoke when用户要排版文章为图片、生成公众号贴图、小红书图文、文章转图片卡片。Do NOT use for原创写作、纯文字排版、视频制作。"
+slug: "xhs-crafter"
+displayName: "XHS Crafter"
+version: "7.4.0"
+summary: "将MD文章排版为3:4比例精美图片+压缩文字稿，用于公众号/小红书贴图发布"
+license: "MIT-0"
 ---
 
 # XHS Crafter — 文章转图片卡片
