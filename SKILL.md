@@ -1,12 +1,36 @@
 ---
 name: "xhs-crafter"
-description: "将MD文章排版为3:4比例的精美图片+压缩文字稿，用于公众号/小红书贴图发布。Invoke when用户要排版文章为图片、生成公众号贴图、小红书图文、文章转图片卡片。Do NOT use for原创写作、纯文字排版、视频制作。"
+description: "将MD文章排版为3:4比例的精美图片+压缩文字稿，用于公众号/小红书贴图发布。核心能力是本地MD→HTML→PNG渲染，可选能力是飞书云盘同步（需用户明确同意）。Invoke when用户要排版文章为图片、生成公众号贴图、小红书图文、文章转图片卡片。Do NOT use for原创写作、纯文字排版、视频制作。"
 ---
 
 # XHS Crafter — 文章转图片卡片
 
 ## 任务
 将用户提供的MD文章内容，排版为多张3:4比例(1080×1440)的精美HTML页面，截图为PNG，压缩为≤1000字文字稿，文件夹交付。不做原创写作，不做视频，不做纯文字排版。
+
+## 隐私与数据流声明（用户须知）
+
+**本技能的数据流边界**：
+- **本地处理（默认）**：MD文本→HTML组装→PNG截图→本地文件夹交付。所有文章内容、图片素材、生成产物默认仅在本地处理，不上传任何外部服务
+- **可选外部能力（需用户明确同意）**：
+  - 图片搜索：调用Pexels/Pixabay API搜索免费图库照片（仅搜索词和图片下载，不上传文章内容）
+  - 飞书云盘同步：将生成PNG+文字稿上传到用户飞书云盘（需用户明确同意，且文章内容可能包含未发布素材）
+- **外部网络依赖**：HTML模板引用Google Fonts（字体加载），中国大陆可能无法访问，影响渲染效果但不影响功能
+
+**用户警告**：
+- ⚠️ 如果文章包含未发布/敏感/专有内容，请谨慎使用飞书云盘同步功能——上传即意味着内容离开本地
+- ⚠️ 图片搜索会将搜索关键词发送到Pexels/Pixabay服务器，但不会发送文章原文
+- ⚠️ 飞书云盘同步需要用户已登录lark-cli，且目标文件夹由用户飞书账号持有
+
+**权限声明**：
+
+| 能力类别 | 是否使用 | 说明 |
+|---------|---------|------|
+| 网络访问 | ✅ | Google Fonts 字体加载（默认）；Pexels/Pixabay API 图片搜索（可选，需用户同意）；飞书云盘上传（可选，需用户同意） |
+| 文件读写 | ✅ | 读 MD 文章 + 模板；写 output/ 目录 PNG+txt；写 `$env:TEMP` 交付文件夹；写 `assets/image-registry.json` 去重注册表 |
+| 环境变量 | ✅ | `PEXELS_API_KEY`、`PIXABAY_API_KEY`（图库搜索，可选）；`CHROME_PATH`（可选，浏览器路径） |
+| subprocess | ✅ | `python -m http.server`（本地回环 127.0.0.1，截图用）；`node assets/screenshot.js`；`node assets/validate.js`；`explorer.exe`（打开交付文件夹） |
+| 外部 API | ✅ | Pexels/Pixabay 图片搜索 API（可选）；飞书 lark-cli drive API（可选云盘同步）；trae-api-cn.mchost.guru AI 生图（仅限 TRAE 内部环境） |
 
 ## 输出格式
 
@@ -19,9 +43,14 @@ description: "将MD文章排版为3:4比例的精美图片+压缩文字稿，用
 └── <slug>-文字稿.txt   # ≤1000字压缩文字
 ```
 
-## 工作流：5步（全自动，中间不停顿）
+## 工作流：5步（默认本地全自动，外部能力需用户同意）
 
-**核心原则：用户给MD，直接出文件夹。** Step 1-2在脑内完成（不输出长文规划），Step 3-5连续执行不等待用户确认。
+**核心原则**：用户给MD，直接出本地文件夹。Step 1-2在脑内完成（不输出长文规划），Step 3-5连续执行不等待用户确认。
+
+**外部能力同意门控**（3道，仅在触发外部网络/云盘时询问，本地渲染不询问）：
+1. **图片搜索门控**（Step 1，用户无图且需背景图时）：询问是否调用Pexels/Pixabay API搜索
+2. **飞书同步门控**（Step 5，本地交付完成后）：询问是否上传到飞书云盘
+3. **若用户明确说"按流程走一遍"或"全流程"**：视为同时授权图片搜索+飞书同步，不再逐项询问
 
 ### Step 1: Intake — 识别品类（脑内完成，不输出）
 从MD内容自动推断：
@@ -31,8 +60,8 @@ description: "将MD文章排版为3:4比例的精美图片+压缩文字稿，用
 - **图片三选一门控**（仅在用户无图时触发，一次性提问不反复追问）：
   ```
   这篇我需要 1-2 张图。三种走法：
-  A. 你自己有照片/截图，传给我（推荐——最不"AI感"）
-  B. 我去 Pexels/Unsplash 帮你找
+  A. 你自己有照片/截图，传给我（推荐——最不"AI感"，完全本地处理）
+  B. 我去 Pexels/Pixabay 帮你找（⚠️ 会将搜索词发送到外部API，但不上传文章原文）
   C. 用 AI 生成
   ```
   推荐 A，但接受用户任何选择（包括"都行你看着办"），不再追问
@@ -107,29 +136,37 @@ description: "将MD文章排版为3:4比例的精美图片+压缩文字稿，用
 | 规则 | 要求 |
 |------|------|
 | 图片下载 | 必须下载到本地`assets/`，禁止引用外部URL |
-| 唯一性验证 | 下载后用`buf1.equals(buf2)`验证，相同则换Unsplash |
+| 唯一性验证 | 下载后用`buf1.equals(buf2)`验证，相同则换源 |
+| 跨项目去重 | 用`image-search.js`自动MD5去重，registry在脚本同目录的`image-registry.json`（由`__dirname`解析，与`screenshot.js`同级） |
 | 满铺图页 | 选图→无遮罩构图→局部色调遮罩→缩略图检查 |
 | 满铺图标题色 | 必须`#ffffff`+`text-shadow`，禁止`#ece2cf` |
 | 主体感知裁切 | 根据`object-position`确保主体完整可见 |
 | 截图展示 | 用`.frame-shot`包壳，给45-65%页面高度 |
-| 图源优先级 | 用户图>Unsplash>Pexels>Wallhaven>AI生成 |
+| 图源优先级 | 用户图>Pexels/Pixabay(API)>Unsplash>Wallhaven>AI生成 |
 | accent面积 | Swiss≤30%，Lemon Green≤20% |
 
+- **封面/封底图片搜索（优先使用 `image-search.js`）**：
+  1. 环境变量：`PEXELS_API_KEY` + `PIXABAY_API_KEY`（已配置为User级环境变量）
+  2. 用法：`node assets/image-search.js <项目目录> --cover "搜索词" --finale "搜索词"`
+  3. 也可搜索候选图：`node assets/image-search.js <项目目录> --search "搜索词" --count 5`
+  4. 脚本自动：Pexels+Pixabay双源搜索→下载→MD5去重→注册到脚本同目录的`image-registry.json`（由`__dirname`解析）
+  5. 去重机制：跨项目MD5哈希比对，已用过的图片自动跳过，长期使用不会重复
+  6. **API Key安全**：环境变量存储，不写入代码/配置文件，.gitignore排除.env和.xhs-crafter/
 - **满铺图页必须遵循 `references/image-overlay.md`**：选图→无遮罩构图→局部色调遮罩→缩略图检查
 - **密度保障**：每页活跃构图≥78%画布高度，读 `references/portrait-fill.md`
 - **节奏保障**：暗色页插入、氛围强弱交替、版式不重复
 - **背景系统**：Editorial 必须使用三层背景（paper→wash→grain），禁止纯平背景。读 `references/background-systems.md`。氛围强度按页面角色分级：封面/引言/封底用 strong，数据/清单用 subtle
 - **图片必须下载到本地**（关键！Puppeteer headless无法可靠加载外部API图片）：
-  1. 用WebFetch获取API返回的CDN URL
-  2. 用curl下载到项目`assets/`目录
+  1. 用`image-search.js`搜索并下载到项目`assets/`目录（自动去重）
+  2. 或手动用curl下载：`curl.exe -L -o "assets/cover.jpg" "URL"`
   3. HTML中用本地相对路径引用：`src="assets/cover.jpg"`
-  4. 禁止直接引用外部URL（trae-api-cn / unsplash / pexels等），一律先下载再引用
-- **图片下载后必须验证唯一性**（关键！AI生图API可能返回相同占位图）：
-  1. 下载多张图片后，用 `buf1.equals(buf2)` 验证它们确实不同
-  2. 如果两张图完全相同，说明API返回了占位图，必须换用Unsplash真实图片
-  3. Unsplash直链格式：`https://images.unsplash.com/photo-{id}?w=1080&h=1440&fit=crop&auto=format&q=85`
+  4. 禁止直接引用外部URL（trae-api-cn.mchost.guru 仅限TRAE内部环境可用 / unsplash / pexels等），一律先下载再引用
+- **图片下载后必须验证唯一性**：
+  1. `image-search.js`已内置MD5去重，自动跳过已用图片
+  2. 手动下载时仍需`buf1.equals(buf2)`验证
+  3. 如果两张图完全相同，换用其他图源
   4. 禁止假设URL不同=内容不同
-- 图源优先级: 用户图 > Unsplash > Pexels > Wallhaven > AI生成(trae-api-cn text_to_image)
+- 图源优先级: 用户图 > Pexels/Pixabay(API搜索) > Unsplash(直链) > Wallhaven > AI生成(trae-api-cn.mchost.guru text_to_image，仅限TRAE内部环境)
 - 截图用 `.frame-shot` 包壳
 
 ### Step 4: Validate — 自检（自动执行，不等待）
@@ -152,7 +189,7 @@ description: "将MD文章排版为3:4比例的精美图片+压缩文字稿，用
 
 ### Step 5: Screenshot & Deliver — 截图交付（直接执行）
 - 用`assets/screenshot.js`截图（自动检测页面ID，无需手动配置）
-  - 用法：先启动`python -m http.server 8090`，然后`node assets/screenshot.js <项目目录>`
+  - 用法：先启动`python -m http.server 8090 --bind 127.0.0.1`（绑定本地回环，不暴露局域网），然后`node assets/screenshot.js <项目目录>`
   - puppeteer-core + 系统Chrome，deviceScaleFactor:2
   - 等待networkidle0 + fonts.ready + 6秒（确保图片加载）
   - Chrome路径: 自动检测`$env:LOCALAPPDATA\ms-playwright\chromium-*\chrome.exe`
@@ -164,14 +201,25 @@ description: "将MD文章排版为3:4比例的精美图片+压缩文字稿，用
   - **压缩模板**：标题(1句) → 场景开场(1-2句，含人物/时间/地点) → 核心论点(1-2句) → 关键原话(1-2条，用「」包裹) → 数据支撑(3-5个关键数字) → 结尾原话(1条)
   - **必须保留**：原文中的人物原话（用「」标记）、访谈/会议场景描述、关键数据
   - **可以删减**：过渡句、重复论述、次要细节、纯背景铺垫
-- **交付方式：本地文件夹 + 飞书云盘同步**（双通道交付）
+- **交付方式：本地文件夹（默认）+ 飞书云盘同步（可选，需用户同意）**
 
-  **A. 本地文件夹（首选）**
+  **A. 本地文件夹（默认，无需询问）**
   1. 在`$env:TEMP`创建`<slug>公众号素材/`文件夹
   2. 将PNG+txt复制到该文件夹
   3. 用`explorer.exe`打开文件夹，用户可拖到桌面
+  4. 完成本地交付后，**询问是否上传到飞书云盘**（不主动执行）
 
-  **B. 飞书云盘同步（手机端访问）**
+  **B. 飞书云盘同步（可选，需用户明确同意——见下方门控）**
+  > ⚠️ **数据外发提示**：上传会将文章相关PNG和文字稿传输到飞书云服务器，离开本地环境。如果文章包含未发布/敏感/专有内容，请勿启用。需要用户已登录lark-cli。
+
+  **飞书同步同意门控**（仅在本地交付完成后触发一次）：
+  ```
+  本地文件夹已交付。是否需要同步到飞书云盘？
+  - 是 → 执行下方上传步骤
+  - 否 → 结束（本地文件夹已是完整交付物）
+  ```
+
+  **用户同意后执行**：
   1. 用`lark-cli drive +create-folder`创建`<slug>公众号素材`文件夹
   2. cd到output目录，用`lark-cli drive +upload --file <filename> --folder-token <token>`逐个上传PNG+txt
   3. 返回飞书云盘文件夹URL，用户手机飞书App打开即可逐张保存到相册

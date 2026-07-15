@@ -2,6 +2,8 @@
 
 > 图片来源规范：免费图库 API、选图规则与裁切指南。
 
+> **数据流边界声明**：所有图片下载到本地后引用，HTML 中禁止直接引用外部 URL。图片搜索调用 Pexels/Pixabay API 时仅发送搜索关键词和图片下载请求，**不会上传文章原文**。
+
 ---
 
 ## 三大免费图库
@@ -237,14 +239,29 @@ https://images.unsplash.com/photo-{id}?w={width}&h={height}&fit=crop&auto=format
 ### 下载方法
 
 ```javascript
-// Node.js 下载（推荐，支持重定向跟踪）
+// Node.js 下载（推荐，支持重定向跟踪+域名白名单）
 const https = require('https');
 const fs = require('fs');
+
+// 允许的图片域名白名单（重定向目标必须在白名单内，防止SSRF）
+const ALLOWED_HOSTS = new Set([
+  'images.pexels.com',
+  'images.unsplash.com',
+  'w.wallhaven.cc',
+  'api.pexels.com',
+  'api.unsplash.com',
+  'wallhaven.cc',
+]);
 
 function download(url, dest) {
   return new Promise((resolve, reject) => {
     const follow = (u, redirects = 0) => {
       if (redirects > 10) return reject(new Error('Too many redirects'));
+      // 校验域名白名单（防止SSRF/重定向到内网或恶意域名）
+      const parsed = new URL(u);
+      if (!ALLOWED_HOSTS.has(parsed.hostname)) {
+        return reject(new Error(`Blocked: host ${parsed.hostname} not in allowlist`));
+      }
       https.get(u, { headers: { 'User-Agent': 'Mozilla/5.0' } }, (res) => {
         if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
           return follow(res.headers.location, redirects + 1);
@@ -270,7 +287,9 @@ curl.exe -s -L -o "assets/cover.jpg" "https://images.unsplash.com/photo-16207129
 
 ### 问题：AI 生图 API 可能返回相同占位图
 
-`trae-api-cn.mchost.guru` 的 `text_to_image` API 无论 prompt 如何不同，可能返回完全相同的占位图。两个不同的 CDN URL 不代表图片内容不同。
+> ⚠️ **环境限制**：`trae-api-cn.mchost.guru` 的 `text_to_image` API 仅限 TRAE 内部环境可用，外部环境无法访问。生产部署请优先使用 Pexels/Pixabay/Unsplash 三大免费图库。
+
+`trae-api-cn.mchost.guru`（仅限 TRAE 内部环境）的 `text_to_image` API 无论 prompt 如何不同，可能返回完全相同的占位图。两个不同的 CDN URL 不代表图片内容不同。
 
 ### 验证方法
 

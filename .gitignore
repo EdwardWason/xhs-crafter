@@ -1,10 +1,22 @@
 # Dependencies
 node_modules/
 
-# Environment
+# Python cache (must be excluded — ClawHub/SkillHub will scan)
+__pycache__/
+*.pyc
+*.pyo
+
+# ClawHub auto-generated (must be excluded)
+.clawhub/
+
+# Environment (contains API keys — NEVER commit)
 .env
 .env.local
 .env.*.local
+
+# Image dedup registry (local only, contains no API keys)
+.xhs-crafter/
+assets/image-registry.json
 
 # OS
 .DS_Store

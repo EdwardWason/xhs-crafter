@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file.
 
+## [7.4.0] - 2026-07-15
+
+### Added — ClawHub SkillSpector 审计整改（17项 Findings 修复）
+- **SKILL.md**: 新增「隐私与数据流声明（用户须知）」章节——核心能力本地处理（默认）+ 可选外部能力（需用户明确同意）+ 外部网络依赖披露
+- **SKILL.md**: 新增 3 道外部能力同意门控（图片搜索门控 / 飞书同步门控 / "按流程走一遍"批量授权）
+- **SKILL.md**: Step 1 图片三选一门控选项 B 加入网络访问警告「⚠️ 会将搜索词发送到外部API，但不上传文章原文」
+- **SKILL.md**: Step 5 飞书云盘同步加入同意门控代码块 + 数据外发提示
+- **README.md**: 新增「隐私与数据流」专章（中英文双语），明确本地处理为默认、可选外部能力需用户同意
+- **image-sources.md**: 开头加入数据流边界声明
+- **image-sources.md**: Node.js download 函数加入 ALLOWED_HOSTS 域名白名单（6 个允许域名）+ 重定向目标校验，防 SSRF
+- **session-handoff.md**: 新增「供应链操作不在本技能范围内」声明，GitHub push / Release / ClawHub publish 标注为用户手动
+
+### Changed — 描述行为一致性修正
+- **SKILL.md**: frontmatter description 重写——「核心能力是本地MD→HTML→PNG渲染，可选能力是飞书云盘同步（需用户明确同意）」
+- **SKILL.md**: 工作流标题改为「5步（默认本地全自动，外部能力需用户同意）」
+- **SKILL.md**: Step 5 交付方式从「双通道交付」改为「本地文件夹（默认）+ 飞书云盘同步（可选，需用户同意）」
+- **SKILL.md**: registry 路径修正——`~/.xhs-crafter/` → 脚本同目录 `image-registry.json`（由 `__dirname` 解析），与代码一致
+- **SKILL.md**: `trae-api-cn.mchost.guru` 全部标注「仅限TRAE内部环境」
+- **README.md**: 版本号 7.1.1 → 7.4.0；品类数 11→13；validate 规则 7→12；中英文双语同步隐私披露
+- **session-handoff.md**: 环境变量表删除 GitHub token / ClawHub CLI 行，改为 PEXELS_API_KEY / PIXABAY_API_KEY / lark-cli（可选）
+- **session-handoff.md**: 依赖约束更新——lark-cli 标注为「可选，仅飞书云盘同步时需要」；AI 生图 API 标注「仅限TRAE内部环境，生产环境改用Pexels/Unsplash」
+- **session-handoff.md**: 版本号同步至 7.4.0
+
+### Fixed — 安全漏洞修复
+- **screenshot.js**: `python -m http.server` 加入 `--bind 127.0.0.1` 参数，绑定本地回环，不再暴露到局域网（0.0.0.0 → 127.0.0.1）
+- **SKILL.md**: http.server 启动命令文档同步加 `--bind 127.0.0.1`
+- **image-sources.md**: download 函数重定向跟踪无域名白名单的 P3 SSRF 风险已修复
+
+### Audit Result
+- ClawHub SkillSpector 17 项 Findings：17/17 修复完成
+- skill-auditor 8 维度审计：T维度 P2（http.server 0.0.0.0）+ P3（SSRF）+ P2（路径不一致）+ P2（trae-api-cn 未标注）全部修复
+- 回归验证：0 新增问题，综合状态 PASS，建议发布到三平台
+
 ## [7.3.1] - 2026-06-12
 
 ### Fixed
