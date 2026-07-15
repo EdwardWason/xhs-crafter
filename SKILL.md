@@ -1,9 +1,9 @@
 ---
 name: "xhs-crafter"
-description: "将MD文章排版为3:4比例的精美图片+压缩文字稿，用于公众号/小红书贴图发布。核心能力是本地MD→HTML→PNG渲染，可选能力是飞书云盘同步（需用户明确同意）。Invoke when用户明确说'xhs-crafter排版'、'用xhs-crafter转图片'、'公众号贴图排版'、'小红书图文卡片'。Do NOT use for原创写作、纯文字排版、视频制作、用户只提到MD文件路径但未明确要求图片排版。"
+description: "将MD文章排版为3:4比例的精美图片+压缩文字稿，用于公众号/小红书贴图发布。核心能力是本地HTML模板填充+Puppeteer截图渲染（启动本地127.0.0.1 HTTP server加载预存HTML模板，非MD→HTML编译管道）。可选外部能力（每项需用户独立明确同意）：(1)Pexels/Pixabay/Unsplash图库API搜索（发送搜索关键词到外部API）；(2)AI生图API（发送prompt到trae-api-cn，仅限TRAE内部环境）；(3)飞书云盘上传（上传生成的PNG+txt到飞书服务器）。Invoke when用户明确说'xhs-crafter排版'、'用xhs-crafter转图片'、'公众号贴图排版'、'小红书图文卡片'。Do NOT use for原创写作、纯文字排版、视频制作、用户只提到MD文件路径但未明确要求图片排版。"
 slug: "xhs-crafter"
 displayName: "XHS Crafter"
-version: "7.6.0"
+version: "7.7.0"
 summary: "将MD文章排版为3:4比例精美图片+压缩文字稿，用于公众号/小红书贴图发布"
 license: "MIT-0"
 ---
@@ -27,15 +27,17 @@ license: "MIT-0"
 - ⚠️ 图片搜索会将搜索关键词发送到Pexels/Pixabay服务器，但不会发送文章原文
 - ⚠️ 飞书云盘同步需要用户已登录lark-cli，且目标文件夹由用户飞书账号持有
 
-**权限声明**：
+**权限声明**（v7.7 完整披露所有行为）：
 
 | 能力类别 | 是否使用 | 说明 |
 |---------|---------|------|
-| 网络访问 | ✅ | Pexels/Pixabay API 图片搜索（可选，需用户同意）；飞书云盘上传（可选，需用户同意）。模板字体已改为系统字体栈，无外部字体加载 |
-| 文件读写 | ✅ | 读 MD 文章 + 模板；写 output/ 目录 PNG+txt；写 `$env:TEMP` 交付文件夹 |
+| 网络访问 | ✅ | **核心行为**：启动本地 127.0.0.1 HTTP server 加载预存 HTML 模板供 Puppeteer 截图（不出局域网）。**可选外部访问**（每项需用户独立同意）：Pexels/Pixabay/Unsplash 图库 API 搜索；trae-api-cn AI 生图 API（仅限 TRAE 内部环境）；飞书云盘上传 |
+| 文件读写 | ✅ | 读 MD 文章 + 预存 HTML 模板（assets/template-*.html）；写 output/ 目录 PNG+txt；写 `$env:TEMP` 交付文件夹；可选下载外部图片到 assets/ 目录（受 ALLOWED_HOSTS 白名单限制） |
 | 环境变量 | ✅ | `PEXELS_API_KEY`、`PIXABAY_API_KEY`（图库搜索，可选）；`CHROME_PATH`（可选，浏览器路径） |
-| subprocess | ✅ | `python -m http.server`（本地回环 127.0.0.1，截图用）；`node assets/screenshot.js`；`node assets/validate.js`；`explorer.exe`（打开交付文件夹） |
-| 外部 API | ✅ | Pexels/Pixabay 图片搜索 API（可选）；飞书 lark-cli drive API（可选云盘同步）；trae-api-cn.mchost.guru AI 生图（仅限 TRAE 内部环境） |
+| subprocess | ✅ | `python -m http.server --bind 127.0.0.1`（本地回环 HTTP server，截图用）；`node assets/screenshot.js`（Puppeteer 截图）；`node assets/validate.js`（自动验证）；`curl.exe`（可选，下载外部图片）；`explorer.exe`（打开交付文件夹） |
+| 外部 API | ✅ | Pexels/Pixabay/Unsplash 图片搜索 API（可选，发送搜索关键词）；trae-api-cn.mchost.guru AI 生图 API（可选，发送 prompt，仅限 TRAE 内部环境）；飞书 lark-cli drive API（可选云盘同步，上传 PNG+txt） |
+
+> ⚠️ **核心行为说明**：本技能的核心能力是 **本地 HTML 模板填充 + Puppeteer 截图渲染**，不是 MD→HTML 编译管道。MD 内容由 AI 读取后填入预存的 HTML 模板（assets/template-editorial-card.html 或 template-swiss-card.html），然后启动本地 HTTP server 加载该 HTML 供 Puppeteer 截图为 PNG。核心流程不涉及外部网络访问。
 
 ## 输出格式
 
@@ -68,9 +70,9 @@ license: "MIT-0"
   这篇我需要 1-2 张图。三种走法：
   A. 你自己有照片/截图，传给我（推荐——最不"AI感"，完全本地处理）
   B. 我去 Pexels/Pixabay 帮你找（⚠️ 会将搜索词发送到外部API，但不上传文章原文）
-  C. 用 AI 生成
+  C. 用 AI 生成（⚠️ 会将prompt发送到trae-api-cn生图API，仅限TRAE内部环境）
   ```
-  推荐 A，但接受用户任何选择（包括"都行你看着办"），不再追问
+  推荐 A。用户必须明确选择 A/B/C 之一（如"用B"、"搜图"、"AI生成"）；若用户说"都行"/"你看着办"等模糊回答，默认走 A（完全本地，无外部数据流），不再追问
 - **仅在品类无法推断时才问用户**，否则直接进入Step 2
 
 ### Step 2: Content Plan — 内容规划（脑内完成，不输出）

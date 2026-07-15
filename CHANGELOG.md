@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
+## [7.7.0] - 2026-07-15
+
+### Fixed — ClawHub SkillSpector 第四轮 10 项 Findings 修复（结构性披露修复）
+
+**过渡修补评估**：本轮 10 项 findings 无过渡修补。v7.6.0 的 Google Fonts 移除和批量授权删除是干净的。本轮揭示的是**更深的结构性问题**：description 只提飞书同步，未披露图片搜索/AI 生图也是外部能力；同意门控铁律与"都行你看着办"接受 AI 生成矛盾；image-sources.md 详细文档化了外部 API 但 description 没披露。
+
+**关键洞察**：SkillSpector 的 High Tp4 finding 明确指出"documented behavior overstates what the skill safely and actually does, while also omitting concrete operational behavior such as starting a local HTTP server and relying on pre-existing HTML rather than a true MD→HTML pipeline"——**description 不仅要披露外部能力，还要准确描述核心行为**。
+
+### Changes
+
+- **High Tp4 (MCP Tool Poisoning) 修复**：
+  - description 从"核心能力是本地MD→HTML→PNG渲染"改为"核心能力是本地HTML模板填充+Puppeteer截图渲染（启动本地127.0.0.1 HTTP server加载预存HTML模板，非MD→HTML编译管道）"
+  - 权限声明表格增加"核心行为说明"段落，明确披露 HTTP server + 预存 HTML 模板行为
+- **High Intent-Code Divergence 修复**：
+  - 删除"推荐 A，但接受用户任何选择（包括'都行你看着办'）"的矛盾表述
+  - 改为"用户必须明确选择 A/B/C 之一；若用户说'都行'/'你看着办'等模糊回答，默认走 A（完全本地，无外部数据流）"
+  - 图片三选一门控选项 C 增加"⚠️ 会将prompt发送到trae-api-cn生图API"风险提示
+- **Description-Behavior Mismatch ×2 修复**：
+  - description 完整列出 3 类可选外部能力（图库 API 搜索 + AI 生图 + 飞书云盘），每项标注数据流方向和发送内容
+  - image-sources.md 顶部增加"外部能力完整披露"表格，列出 3 类外部数据流 + 风险等级 + 同意门控
+- **Context-Inappropriate Capability ×3 修复**：
+  - image-sources.md API URL 脱敏（pexels.com/api / api.pexels.com/v1/search 等占位符显示）
+  - AI 生图验证规则段落增加"外部能力同意门控"提示
+  - references/workflow.md 图片下载步骤增加"外部下载风险提示"+ ALLOWED_HOSTS 白名单说明
+- **Intent-Code Divergence (数据流声明矛盾) 修复**：
+  - image-sources.md 旧声明"仅发送搜索关键词和图片下载请求，不会上传文章原文"改为完整的"外部能力完整披露"表格，明确 AI 生图会发送 prompt
+  - 新增"不会发生的数据流"段落：文章原文不会被上传到任何外部服务
+- **External Transmission ×2 修复**：
+  - Pexels/Unsplash API URL 在文档中用占位符显示（api.pexels.com/v1/search / api.unsplash.com/search/photos），实际调用时拼接
+
+### Audit Result
+- ClawHub SkillSpector 第四轮 10 项 Findings：10/10 修复完成
+- description 完整披露：核心行为（HTTP server + 预存 HTML）+ 3 类可选外部能力
+- 同意门控铁律：消除"都行你看着办"接受 AI 生成的矛盾
+- image-sources.md：外部能力清单 + 数据流方向 + 风险等级 + API URL 脱敏
+
 ## [7.6.0] - 2026-07-15
 
 ### Fixed — ClawHub SkillSpector 第三轮 8 项 Findings 修复

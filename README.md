@@ -2,7 +2,7 @@
 
 将 Markdown 文章排版为 3:4 比例的精美图片卡片 + 压缩文字稿，用于微信公众号/小红书贴图发布。
 
-[![版本](https://img.shields.io/badge/version-7.6.0-blue)](https://github.com/EdwardWason/xhs-crafter)
+[![版本](https://img.shields.io/badge/version-7.7.0-blue)](https://github.com/EdwardWason/xhs-crafter)
 [![许可证](https://img.shields.io/badge/license-MIT--0-green)](LICENSE)
 [![ClawHub](https://img.shields.io/badge/ClawHub-xhs--crafter-orange)](https://clawhub.ai/EdwardWason/xhs-crafter)
 
@@ -30,7 +30,7 @@
 - **图片搜索**：调用Pexels/Pixabay API搜索免费图库照片。⚠️ 仅搜索词和图片下载会发送到Pexels/Pixabay服务器，**不会上传文章原文**
 - **飞书云盘同步**：将生成PNG+文字稿上传到用户飞书云盘。⚠️ 上传即意味着内容离开本地，如文章包含未发布/敏感/专有内容请勿启用
 
-**外部网络依赖**：v7.6 已移除 Google Fonts CDN 引用，模板使用系统字体回退栈（Noto Serif SC / Source Han Serif SC / Songti SC / PingFang SC / Consolas 等），完全本地渲染。`trae-api-cn.mchost.guru`（AI生图API）仅限TRAE内部环境可用。
+**外部网络依赖**：核心渲染流程完全本地（启动 127.0.0.1 HTTP server 加载预存 HTML 模板 + Puppeteer 截图，无外部网络）。可选外部能力（每项需用户独立同意）：(1)Pexels/Pixabay/Unsplash 图库 API 搜索（发送搜索关键词）；(2)trae-api-cn AI 生图 API（发送 prompt，仅限 TRAE 内部环境）；(3)飞书云盘上传。v7.6 已移除 Google Fonts CDN 引用，模板使用系统字体回退栈。
 
 ## 快速开始
 
@@ -118,7 +118,7 @@ License: MIT-0
 
 Convert Markdown articles into beautifully designed 3:4 ratio image cards + compressed text drafts for WeChat Official Account / Xiaohongshu (Little Red Book) image-post publishing.
 
-[![version](https://img.shields.io/badge/version-7.6.0-blue)](https://github.com/EdwardWason/xhs-crafter)
+[![version](https://img.shields.io/badge/version-7.7.0-blue)](https://github.com/EdwardWason/xhs-crafter)
 [![license](https://img.shields.io/badge/license-MIT--0-green)](LICENSE)
 [![ClawHub](https://img.shields.io/badge/ClawHub-xhs--crafter-orange)](https://clawhub.ai/EdwardWason/xhs-crafter)
 
@@ -146,7 +146,7 @@ Convert Markdown articles into beautifully designed 3:4 ratio image cards + comp
 - **Image search**: Calls Pexels/Pixabay API to search free stock photos. ⚠️ Only search keywords and image downloads are sent to Pexels/Pixabay servers — **article content is never uploaded**
 - **Feishu cloud-drive sync**: Uploads generated PNGs + text drafts to user's Feishu cloud drive. ⚠️ Uploading means content leaves the local machine — do not enable if the article contains unpublished/sensitive/proprietary material
 
-**External network dependencies**: v7.6 removed Google Fonts CDN references — templates now use system font fallback stacks (Noto Serif SC / Source Han Serif SC / Songti SC / PingFang SC / Consolas), fully local rendering. `trae-api-cn.mchost.guru` (AI image generation API) is available only inside the TRAE internal environment.
+**External network dependencies**: Core rendering is fully local (starts 127.0.0.1 HTTP server to load pre-stored HTML template + Puppeteer screenshot, no external network). Optional external capabilities (each requires independent user consent): (1) Pexels/Pixabay/Unsplash image API search (sends search keywords); (2) trae-api-cn AI image generation API (sends prompt, TRAE internal only); (3) Feishu cloud drive upload. v7.6 removed Google Fonts CDN references, templates use system font fallback stacks.
 
 ## Quick Start
 

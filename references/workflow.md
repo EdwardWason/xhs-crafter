@@ -38,6 +38,7 @@ MD文章输入
 - 密度保障：每页活跃构图≥78%画布高度
 - 节奏保障：暗色页插入、氛围强弱交替、版式不重复
 - **图片必须下载到本地**：Puppeteer headless无法可靠加载外部API图片
+  > ⚠️ **外部下载风险提示（v7.7）**：以下步骤涉及从外部 CDN 下载图片文件到本地。下载内容受 ALLOWED_HOSTS 域名白名单限制（images.pexels.com / images.unsplash.com / w.wallhaven.cc），防止 SSRF。仅在用户通过 Step 1 图片三选一门控选择 B 或 C 后执行。
   1. 用WebFetch获取API返回的CDN URL
   2. 用curl下载到项目`assets/`目录
   3. HTML中用本地相对路径引用
