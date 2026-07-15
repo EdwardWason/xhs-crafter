@@ -3,7 +3,7 @@ name: "xhs-crafter"
 description: "将MD文章排版为3:4比例的精美图片+压缩文字稿，用于公众号/小红书贴图发布。核心能力是本地MD→HTML→PNG渲染，可选能力是飞书云盘同步（需用户明确同意）。Invoke when用户要排版文章为图片、生成公众号贴图、小红书图文、文章转图片卡片。Do NOT use for原创写作、纯文字排版、视频制作。"
 slug: "xhs-crafter"
 displayName: "XHS Crafter"
-version: "7.4.0"
+version: "7.5.0"
 summary: "将MD文章排版为3:4比例精美图片+压缩文字稿，用于公众号/小红书贴图发布"
 license: "MIT-0"
 ---
@@ -32,7 +32,7 @@ license: "MIT-0"
 | 能力类别 | 是否使用 | 说明 |
 |---------|---------|------|
 | 网络访问 | ✅ | Google Fonts 字体加载（默认）；Pexels/Pixabay API 图片搜索（可选，需用户同意）；飞书云盘上传（可选，需用户同意） |
-| 文件读写 | ✅ | 读 MD 文章 + 模板；写 output/ 目录 PNG+txt；写 `$env:TEMP` 交付文件夹；写 `assets/image-registry.json` 去重注册表 |
+| 文件读写 | ✅ | 读 MD 文章 + 模板；写 output/ 目录 PNG+txt；写 `$env:TEMP` 交付文件夹 |
 | 环境变量 | ✅ | `PEXELS_API_KEY`、`PIXABAY_API_KEY`（图库搜索，可选）；`CHROME_PATH`（可选，浏览器路径） |
 | subprocess | ✅ | `python -m http.server`（本地回环 127.0.0.1，截图用）；`node assets/screenshot.js`；`node assets/validate.js`；`explorer.exe`（打开交付文件夹） |
 | 外部 API | ✅ | Pexels/Pixabay 图片搜索 API（可选）；飞书 lark-cli drive API（可选云盘同步）；trae-api-cn.mchost.guru AI 生图（仅限 TRAE 内部环境） |
@@ -142,7 +142,7 @@ license: "MIT-0"
 |------|------|
 | 图片下载 | 必须下载到本地`assets/`，禁止引用外部URL |
 | 唯一性验证 | 下载后用`buf1.equals(buf2)`验证，相同则换源 |
-| 跨项目去重 | 用`image-search.js`自动MD5去重，registry在脚本同目录的`image-registry.json`（由`__dirname`解析，与`screenshot.js`同级） |
+| 跨项目去重 | 下载后手动用`buf1.equals(buf2)`验证图片内容不同（文件级校验，不依赖跨项目 registry） |
 | 满铺图页 | 选图→无遮罩构图→局部色调遮罩→缩略图检查 |
 | 满铺图标题色 | 必须`#ffffff`+`text-shadow`，禁止`#ece2cf` |
 | 主体感知裁切 | 根据`object-position`确保主体完整可见 |
@@ -150,27 +150,23 @@ license: "MIT-0"
 | 图源优先级 | 用户图>Pexels/Pixabay(API)>Unsplash>Wallhaven>AI生成 |
 | accent面积 | Swiss≤30%，Lemon Green≤20% |
 
-- **封面/封底图片搜索（优先使用 `image-search.js`）**：
-  1. 环境变量：`PEXELS_API_KEY` + `PIXABAY_API_KEY`（已配置为User级环境变量）
-  2. 用法：`node assets/image-search.js <项目目录> --cover "搜索词" --finale "搜索词"`
-  3. 也可搜索候选图：`node assets/image-search.js <项目目录> --search "搜索词" --count 5`
-  4. 脚本自动：Pexels+Pixabay双源搜索→下载→MD5去重→注册到脚本同目录的`image-registry.json`（由`__dirname`解析）
-  5. 去重机制：跨项目MD5哈希比对，已用过的图片自动跳过，长期使用不会重复
-  6. **API Key安全**：环境变量存储，不写入代码/配置文件，.gitignore排除.env和.xhs-crafter/
+- **封面/封底图片下载**：
+  1. 优先用户提供的图片（最真实，无"AI感"）
+  2. 用户无图时，询问是否调用 Pexels/Pixabay API 搜索（需用户同意，见 Step 1 图片三选一门控）
+  3. 用户同意后，用 `curl.exe -L -o "assets/cover.jpg" "URL"` 手动下载（URL 来自 Pexels/Pixabay API 返回）
+  4. Unsplash 直链备选：`https://images.unsplash.com/photo-{id}?w=1080&h=1440&fit=crop&auto=format&q=85`
 - **满铺图页必须遵循 `references/image-overlay.md`**：选图→无遮罩构图→局部色调遮罩→缩略图检查
 - **密度保障**：每页活跃构图≥78%画布高度，读 `references/portrait-fill.md`
 - **节奏保障**：暗色页插入、氛围强弱交替、版式不重复
 - **背景系统**：Editorial 必须使用三层背景（paper→wash→grain），禁止纯平背景。读 `references/background-systems.md`。氛围强度按页面角色分级：封面/引言/封底用 strong，数据/清单用 subtle
 - **图片必须下载到本地**（关键！Puppeteer headless无法可靠加载外部API图片）：
-  1. 用`image-search.js`搜索并下载到项目`assets/`目录（自动去重）
-  2. 或手动用curl下载：`curl.exe -L -o "assets/cover.jpg" "URL"`
-  3. HTML中用本地相对路径引用：`src="assets/cover.jpg"`
-  4. 禁止直接引用外部URL（trae-api-cn.mchost.guru 仅限TRAE内部环境可用 / unsplash / pexels等），一律先下载再引用
+  1. 用户同意后，用 `curl.exe -L -o "assets/cover.jpg" "URL"` 手动下载
+  2. HTML中用本地相对路径引用：`src="assets/cover.jpg"`
+  3. 禁止直接引用外部URL（trae-api-cn.mchost.guru 仅限TRAE内部环境可用 / unsplash / pexels等），一律先下载再引用
 - **图片下载后必须验证唯一性**：
-  1. `image-search.js`已内置MD5去重，自动跳过已用图片
-  2. 手动下载时仍需`buf1.equals(buf2)`验证
-  3. 如果两张图完全相同，换用其他图源
-  4. 禁止假设URL不同=内容不同
+  1. 下载多张图片后，用 `buf1.equals(buf2)` 验证图片文件内容不同
+  2. 如果两张图完全相同，换用其他图源
+  3. 禁止假设URL不同=内容不同
 - 图源优先级: 用户图 > Pexels/Pixabay(API搜索) > Unsplash(直链) > Wallhaven > AI生成(trae-api-cn.mchost.guru text_to_image，仅限TRAE内部环境)
 - 截图用 `.frame-shot` 包壳
 

@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [7.5.0] - 2026-07-15
+
+### Fixed — 过渡修补回退（ClawHub SkillSpector 第二轮 9 项 Findings 修复）
+
+**根因诊断**：v7.4.0 为修复"图片搜索门控"新增了 `assets/image-search.js`，但该脚本引入了 Pexels/Pixabay API 调用 + 跨项目 hash registry + 环境变量读取三项新能力，反而触发 5 项新 Findings（Tp4 High + Description-Behavior Mismatch High + 2 个 Context-Inappropriate Capability Medium + External Transmission Medium）。这是典型的过渡修补——为修复一个问题引入了更大的问题。
+
+- **删除 `assets/image-search.js`**（过渡修补产物）：回退到"手动 curl 下载 + buf1.equals(buf2) 验证"方式，不依赖跨项目 registry，不主动联网搜索
+- **SKILL.md**: 移除所有 image-search.js 引用（6 处）；权限声明表格"文件读写"行移除 `assets/image-registry.json` 去重注册表描述；图片规则速查表"跨项目去重"行改为"文件级校验，不依赖跨项目 registry"；封面/封底图片下载改为"手动 curl 下载 + Unsplash 直链备选"
+- **references/workflow.md**: 修复残留的旧引用块「v7 — 5步全自动工作流，文件夹+飞书云盘双通道交付」→「v7.5 — 5步工作流（默认本地全自动，外部能力需用户同意）」；http.server 启动命令加 `--bind 127.0.0.1`；交付方式 A/B 分支加入同意门控 + 数据外发提示
+- **docs/session-handoff.md**: 版本号同步至 7.5.0；ClawHub 平台状态表更新至 7.4.0
+
+### Audit Result
+- ClawHub SkillSpector 第二轮 9 项 Findings：9/9 修复完成
+- 过渡修补回退：删除 image-search.js，消除 5 项新 Findings 的根因
+- 残留引用块修复：workflow.md 旧描述同步至 v7.5
+- 交付门控表述强化：workflow.md A/B 分支加入同意门控代码块
+
 ## [7.4.0] - 2026-07-15
 
 ### Added — ClawHub SkillSpector 审计整改（17项 Findings 修复）
