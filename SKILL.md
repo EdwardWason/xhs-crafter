@@ -3,7 +3,7 @@ name: "xhs-crafter"
 description: "将MD文章排版为3:4比例的精美图片+压缩文字稿，用于公众号/小红书贴图发布。核心能力是本地HTML模板填充+Puppeteer截图渲染（启动本地127.0.0.1 HTTP server加载预存HTML模板，非MD→HTML编译管道）。可选外部能力（每项需用户独立明确同意）：(1)Pexels/Pixabay/Unsplash图库API搜索（发送搜索关键词到外部API）；(2)AI生图API（发送prompt到trae-api-cn，仅限TRAE内部环境）；(3)飞书云盘上传（上传生成的PNG+txt到飞书服务器）。Invoke when用户明确说'xhs-crafter排版'、'用xhs-crafter转图片'、'公众号贴图排版'、'小红书图文卡片'。Do NOT use for原创写作、纯文字排版、视频制作、用户只提到MD文件路径但未明确要求图片排版。"
 slug: "xhs-crafter"
 displayName: "XHS Crafter"
-version: "7.7.0"
+version: "7.8.0"
 summary: "将MD文章排版为3:4比例精美图片+压缩文字稿，用于公众号/小红书贴图发布"
 license: "MIT-0"
 ---
@@ -70,7 +70,7 @@ license: "MIT-0"
   这篇我需要 1-2 张图。三种走法：
   A. 你自己有照片/截图，传给我（推荐——最不"AI感"，完全本地处理）
   B. 我去 Pexels/Pixabay 帮你找（⚠️ 会将搜索词发送到外部API，但不上传文章原文）
-  C. 用 AI 生成（⚠️ 会将prompt发送到trae-api-cn生图API，仅限TRAE内部环境）
+  C. 用 AI 生成（⚠️ 会将生图prompt发送到trae-api-cn.mchost.guru生图API，prompt可能含文章主题/场景描述，仅限TRAE内部环境）
   ```
   推荐 A。用户必须明确选择 A/B/C 之一（如"用B"、"搜图"、"AI生成"）；若用户说"都行"/"你看着办"等模糊回答，默认走 A（完全本地，无外部数据流），不再追问
 - **仅在品类无法推断时才问用户**，否则直接进入Step 2
@@ -150,7 +150,7 @@ license: "MIT-0"
 | 满铺图标题色 | 必须`#ffffff`+`text-shadow`，禁止`#ece2cf` |
 | 主体感知裁切 | 根据`object-position`确保主体完整可见 |
 | 截图展示 | 用`.frame-shot`包壳，给45-65%页面高度 |
-| 图源优先级 | 用户图>Pexels/Pixabay(API)>Unsplash>Wallhaven>AI生成 |
+| 图源优先级 | 用户图>Pexels/Pixabay(API)>Unsplash(直链)>AI生成 |
 | accent面积 | Swiss≤30%，Lemon Green≤20% |
 
 - **封面/封底图片下载**：
@@ -170,7 +170,7 @@ license: "MIT-0"
   1. 下载多张图片后，用 `buf1.equals(buf2)` 验证图片文件内容不同
   2. 如果两张图完全相同，换用其他图源
   3. 禁止假设URL不同=内容不同
-- 图源优先级: 用户图 > Pexels/Pixabay(API搜索) > Unsplash(直链) > Wallhaven > AI生成(trae-api-cn.mchost.guru text_to_image，仅限TRAE内部环境)
+- 图源优先级: 用户图 > Pexels/Pixabay(API搜索) > Unsplash(直链) > AI生成(trae-api-cn.mchost.guru text_to_image，仅限TRAE内部环境)
 - 截图用 `.frame-shot` 包壳
 
 ### Step 4: Validate — 自检（自动执行，不等待）
@@ -270,7 +270,7 @@ license: "MIT-0"
 | `references/layout-recipes.md` | 28种布局模板(M01-M16+S01-S12) |
 | `references/screenshot-treatment.md` | 截图美化：设备外壳+背景材质+风格默认 |
 | `references/background-systems.md` | **背景系统**：三层架构（paper→wash→grain）+ 氛围强度分级 + 满铺图页 + Swiss极简 |
-| `references/image-sources.md` | Pexels/Unsplash/Wallhaven图库接入 + AI生图验证规则 |
+| `references/image-sources.md` | Pexels/Unsplash图库接入 + AI生图验证规则 |
 
 ## 示例
 

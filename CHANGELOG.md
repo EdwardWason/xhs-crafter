@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [7.8.0] - 2026-07-15
+
+### Fixed — ClawHub SkillSpector 第五轮 4 项 Findings 修复（Wallhaven 未披露 + AI 生图披露不一致）
+
+**过渡修补评估**：4 项 findings 全部指向同一根因——Wallhaven 未被完整披露。这是 v7.7.0 修复时的遗漏（写了"3 类外部数据流"但保留了 Wallhaven 作为第 4 个图库），不是过渡修补。
+
+**修复策略**：删除 Wallhaven（混合版权，非首选，实际很少用到），比披露它更简单干净，符合"最小化外部依赖"原则。
+
+### Changes
+
+- **Wallhaven 移除（3 项 findings 修复）**：
+  - `references/image-sources.md`: 删除 Wallhaven 章节（### 3. Wallhaven 完整段落）+ ALLOWED_HOSTS 移除 w.wallhaven.cc / wallhaven.cc
+  - `SKILL.md`: 图源优先级移除 Wallhaven（2 处）+ references 索引移除 Wallhaven
+  - `references/category-cookbook.md`: 游戏品类图源从 Wallhaven 改为 Pexels/Unsplash
+  - `references/workflow.md`: ALLOWED_HOSTS 提示移除 w.wallhaven.cc
+- **AI 生图披露不一致修复（1 项 finding）**：
+  - SKILL.md 图片三选一门控选项 C：从"会将prompt发送到trae-api-cn生图API"改为"会将生图prompt发送到trae-api-cn.mchost.guru生图API，prompt可能含文章主题/场景描述"——与权限声明表格的域名和风险描述一致
+
+### Audit Result
+- ClawHub SkillSpector 第五轮 4 项 Findings：4/4 修复完成
+- Wallhaven：完全移除，外部图库简化为 Pexels/Pixabay/Unsplash 三个
+- AI 生图披露：选项 C 与权限声明表格一致
+
 ## [7.7.0] - 2026-07-15
 
 ### Fixed — ClawHub SkillSpector 第四轮 10 项 Findings 修复（结构性披露修复）

@@ -2,7 +2,7 @@
 
 将 Markdown 文章排版为 3:4 比例的精美图片卡片 + 压缩文字稿，用于微信公众号/小红书贴图发布。
 
-[![版本](https://img.shields.io/badge/version-7.7.0-blue)](https://github.com/EdwardWason/xhs-crafter)
+[![版本](https://img.shields.io/badge/version-7.8.0-blue)](https://github.com/EdwardWason/xhs-crafter)
 [![许可证](https://img.shields.io/badge/license-MIT--0-green)](LICENSE)
 [![ClawHub](https://img.shields.io/badge/ClawHub-xhs--crafter-orange)](https://clawhub.ai/EdwardWason/xhs-crafter)
 
@@ -118,7 +118,7 @@ License: MIT-0
 
 Convert Markdown articles into beautifully designed 3:4 ratio image cards + compressed text drafts for WeChat Official Account / Xiaohongshu (Little Red Book) image-post publishing.
 
-[![version](https://img.shields.io/badge/version-7.7.0-blue)](https://github.com/EdwardWason/xhs-crafter)
+[![version](https://img.shields.io/badge/version-7.8.0-blue)](https://github.com/EdwardWason/xhs-crafter)
 [![license](https://img.shields.io/badge/license-MIT--0-green)](LICENSE)
 [![ClawHub](https://img.shields.io/badge/ClawHub-xhs--crafter-orange)](https://clawhub.ai/EdwardWason/xhs-crafter)
 

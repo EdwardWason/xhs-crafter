@@ -100,51 +100,6 @@ curl.exe -s -H "Authorization: Client-ID <ACCESS_KEY>" \
 
 ---
 
-### 3. Wallhaven
-
-| 项目 | 说明 |
-|------|------|
-| **网址** | `wallhaven.cc/help/api`（脱敏显示） |
-| **特点** | 游戏、摄影、壁纸类内容丰富 |
-| **API endpoint** | `wallhaven.cc/api/v1/search`（脱敏显示） |
-| **认证** | 免费，基础搜索无需 API Key |
-| **备用** | 浏览 `wallhaven.cc/search?q={keyword}` |
-| **版权** | 混合版权，商用优先选择 Pexels/Unsplash |
-
-**API 调用方式**：
-
-```bash
-curl.exe -s "https://wallhaven.cc/api/v1/search?q=<keyword>&categories=111&purity=100&sorting=relevance"
-```
-
-**响应关键字段：**
-
-```json
-{
-  "data": [
-    {
-      "id": "abc123",
-      "width": 3840,
-      "height": 2160,
-      "path": "https://w.wallhaven.cc/full/abc123.jpg",
-      "url": "https://wallhaven.cc/w/abc123",
-      "category": "nature",
-      "purity": "sfw"
-    }
-  ]
-}
-```
-
-**参数说明：**
-
-| 参数 | 值 | 说明 |
-|------|---|------|
-| `categories` | `111` | 三个数字分别代表 General/Anime/People，1=启用 |
-| `purity` | `100` | 三个数字分别代表 SFW/Sketchy/NSFW，1=启用 |
-| `sorting` | `relevance`, `random`, `date_added`, `views`, `favorites`, `toplist` | 排序方式 |
-
----
-
 ## 图片选择规则（Image Selection Rules）
 
 ### 优先级排序
@@ -258,10 +213,8 @@ const fs = require('fs');
 const ALLOWED_HOSTS = new Set([
   'images.pexels.com',
   'images.unsplash.com',
-  'w.wallhaven.cc',
   'api.pexels.com',
   'api.unsplash.com',
-  'wallhaven.cc',
 ]);
 
 function download(url, dest) {
